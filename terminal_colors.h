@@ -1,0 +1,4 @@
+#ifndef TERMINAL_COLORS_H
+#define TERMINAL_COLORS_H
+
+#endif // TERMINAL_COLORS_H
