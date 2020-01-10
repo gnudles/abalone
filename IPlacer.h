@@ -1,11 +1,13 @@
-#ifndef PLACEMENTMANAGER_H
-#define PLACEMENTMANAGER_H
+#ifndef IPLACER_H
+#define IPLACER_H
+#include <vector>
 
-
-class PlacementManager
+class IAbaloneBoard;
+class IPlacer
 {
 public:
-    PlacementManager();
+    virtual void Place(IAbaloneBoard* board, int num_players, int marbles) = 0;
+    virtual std::vector<int> numberOfMarblesPossible(int num_players) = 0;
 };
 
-#endif // PLACEMENTMANAGER_H
+#endif // IPLACER_H

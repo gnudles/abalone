@@ -2,10 +2,12 @@
 #define BOARDPRINTERCONSOLE_H
 
 
+class IAbaloneBoard;
+
 class BoardPrinterConsole
 {
 public:
-    BoardPrinterConsole();
+    virtual void Print(const IAbaloneBoard* board);
 };
 
 #endif // BOARDPRINTERCONSOLE_H

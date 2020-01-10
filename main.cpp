@@ -2,16 +2,18 @@
 #include "BoardPrinterConsole.h"
 #include "AbaloneBoard.h"
 #include "terminal_colors.h"
+#include "HexDefaultPlacer.h"
 using namespace std;
 
 
 int main()
 {
     BoardPrinterConsole printer;
-    using standard_abalone  = AbaloneBoard<5,2> ;
+    using standard_abalone  = AbaloneBoard<5,2>;
     standard_abalone abalone_board;
-    abalone_board.addMarble(0,IAbaloneBoard::BLACK);
-    abalone_board.addMarble(1,IAbaloneBoard::WHITE);
+
+    HexDefaultPlacer placer;
+    placer.Place(&abalone_board,3,14);
     printer.Print(&abalone_board);
     return 0;
 }
