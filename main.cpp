@@ -66,8 +66,11 @@ int main()
 
             if (valid_input)
             {
-                if (abalone_board.makeMove(IAbaloneBoard::BLACK, from - 1, to - 1, d, true)==IAbaloneBoard::MOVE_OK)
+                if (abalone_board.makeMove(abalone_board.currentTurn(), from - 1, to - 1, d, true)==IAbaloneBoard::MOVE_OK)
+                {
+                    abalone_board.nextTurn();
                     printer.Print(&abalone_board);
+                }
                 else
                 {
                     printf("invalid move!\n");

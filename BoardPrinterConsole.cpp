@@ -27,6 +27,27 @@ void BoardPrinterConsole::Print(const IAbaloneBoard* board)
 
     }
     printf("\n\n");
+    /*for (int i =0; i< board->numberOfPlayers();++i)
+    {
+        printf("")
+    }*/
+    printf("whites off: %d      blacks off: %d\n\n",board->takenDown(IAbaloneBoard::WHITE),board->takenDown(IAbaloneBoard::BLACK));
+    const char * str;
+    if (board->currentTurn() == IAbaloneBoard::BLACK)
+    {
+        str="purple";
+
+    }
+    else if (board->currentTurn() == IAbaloneBoard::WHITE)
+    {
+        str="yellow";
+    }
+    else if (board->currentTurn() == IAbaloneBoard::RED)
+    {
+        str="red";
+    }
+
+    printf ("Player of %s marbles, what is your move?\n",str);
 
 
 }
