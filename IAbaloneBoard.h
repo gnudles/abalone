@@ -6,8 +6,9 @@
 class IAbaloneBoard
 {
 public:
-    typedef enum {WHITE = 0, BLACK, RED, NONE} MarbleColor;
-    typedef enum {UP_LEFT = 0, UP_RIGHT, RIGHT, DOWN_RIGHT,DOWN_LEFT,LEFT} Directions;
+    typedef enum {WHITE = 0, BLACK, RED, NO_MARBLE} MarbleColor;
+    typedef enum {UP_LEFT = 0, UP_RIGHT, RIGHT, DOWN_RIGHT,DOWN_LEFT,LEFT} Direction;
+    typedef enum {MOVE_OK = 0, OPPONENT_MARBLES, INVALID_MOVE, NO_MARBLES_TO_PUSH, SUICIDAL,CANT_PUSH_IT, DONT_PUSH_YOURSELF, POINTS_TOO_FAR} MoveCode;
     /*
      *    0 \   / 1
      *  5 <-     -> 2
@@ -20,6 +21,7 @@ public:
     virtual MarbleColor getMarbleAt(int position) const = 0;
     virtual void addMarble(int position, MarbleColor marble) = 0;
     virtual int rotatePosition(int position, int rotation) const = 0;
+    virtual MoveCode makeMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, bool activate) = 0;
 };
 
 #endif // IABALONEBOARD_H

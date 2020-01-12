@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console c++1z
 CONFIG -= app_bundle
 CONFIG -= qt
-LIBS += -lfann
+LIBS += -lfann -lreadline
 
 SOURCES += main.cpp \
     BoardPrinterConsole.cpp \
