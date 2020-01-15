@@ -3,6 +3,7 @@
 #include <array>
 #include <assert.h>
 #include <unordered_set>
+#include <math.h>
 
 #include "IAbaloneBoard.h"
 template<typename T>
@@ -36,12 +37,14 @@ public:
 private:
     using rows_array_t = std::array<int , rows>;
     using cells_array_t = std::array<int , cells>;
+    using cells_coord_array_t = std::array<std::pair<float,float> , cells>;
     using cells_neigh_array_t = std::array<std::array<int,6> , cells>;
     /*
      *    0 \   / 1
      *  5 <-     -> 2
      *    4 /   \ 3
      */
+
 
 
     static constexpr cells_array_t initializeRowOfCell()
@@ -111,6 +114,21 @@ private:
         }
     static constexpr cells_array_t row_of_cell{initializeRowOfCell()};
     static constexpr cells_array_t pos_in_row_of_cell{initializeCellPosInRow()};
+
+    static constexpr cells_coord_array_t initializeCartCoords() //center piece is (0,0)
+    {
+        cells_coord_array_t coords=cells_coord_array_t();
+        for (int i =0 ;i< cells;++i)
+        {
+            int r = row_of_cell[i];
+            int clmn = pos_in_row_of_cell[i];
+            float x=-(edge_length-1) + clmn + fabs(r-(edge_length-1))*0.5;
+            float y=(r-(edge_length-1))*0.86602540378443864676372317f;
+            coords[i]=std::pair<float,float>(x,y);
+        }
+
+    }
+    static constexpr cells_coord_array_t cartesian_coordinates{initializeCartCoords()};
     static constexpr inline short retrieve_pixel(std::array<std::array<short,rows*2-1>,rows> & pixels, int x, int y)
     {
         if (x>=pixels[0].size() || x < 0 || y<0 || y>= pixels.size())
