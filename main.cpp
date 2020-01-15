@@ -52,10 +52,9 @@ int main()
             {
                 valid_input = 0;
 
-                const char* direction_literals[6] = {"ul","ur","r","dr","dl","l"};
                 for (int i = 0; i< 6; ++i)
                 {
-                    if (strcasecmp(strbuf,direction_literals[i]) == 0)
+                    if (strcasecmp(strbuf,IAbaloneBoard::directionLiterals[i]) == 0)
                     {
                         d = (standard_abalone::Direction)i;
                         valid_input = 1;
@@ -66,9 +65,9 @@ int main()
 
             if (valid_input)
             {
-                if (abalone_board.makeMove(abalone_board.currentTurn(), from - 1, to - 1, d, true)==IAbaloneBoard::MOVE_OK)
+                IAbaloneBoard::MoveType mt;
+                if (abalone_board.makeMove(abalone_board.currentTurn(), from - 1, to - 1, d, mt, true)==IAbaloneBoard::MOVE_OK)
                 {
-                    abalone_board.nextTurn();
                     printer.Print(&abalone_board);
                 }
                 else

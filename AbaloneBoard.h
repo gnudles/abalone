@@ -228,22 +228,21 @@ private:
 
     }
 
-    MoveCode __makeMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, bool activate)
+    MoveCode __makeMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, MoveType& mt, bool activate)
     {
         assert(color!= NO_MARBLE);
         assert(first_marble_pos >= 0);
         assert(last_marble_pos >= 0);
         assert(first_marble_pos < cells);
         assert(last_marble_pos < cells);
+        mt = NO_MOVE;
 
         if (cell_marble[first_marble_pos].first != color)
         {
             return (cell_marble[first_marble_pos].first == NO_MARBLE)?NO_MARBLES_TO_PUSH:OPPONENT_MARBLES;
         }
-        int num_marbles = 0;
         if (first_marble_pos == last_marble_pos) // moving 1 marble
         {
-            num_marbles = 1;
             int destination = cell_neighbors[first_marble_pos][d];
             if (destination == -1)
                 return SUICIDAL;
@@ -255,6 +254,7 @@ private:
             {
                 moveSingleMarble(first_marble_pos, destination);
             }
+            mt = ONE_MOVE;
             return MOVE_OK;
         }
         //moving 2 or more marbles...
@@ -290,6 +290,7 @@ private:
                         moveSingleMarble(first_marble_pos, first_destination);
                         moveSingleMarble(last_marble_pos, last_destination);
                     }
+                    mt = TWO_SLIDE;
                     return MOVE_OK;
                 }
                 else
@@ -318,6 +319,7 @@ private:
                                 moveSingleMarble(last_marble_pos, last_destination);
                                 moveSingleMarble(first_marble_pos, first_destination);
                             }
+                            mt = push_one_to_water?TWO_KILL_ONE:TWO_PUSH_ONE;
                             return MOVE_OK;
                         }
                         else
@@ -333,6 +335,7 @@ private:
                             moveSingleMarble(last_marble_pos, last_destination);
                             moveSingleMarble(first_marble_pos, first_destination);
                         }
+                        mt = TWO_MOVE;
                         return MOVE_OK;
                     }
                 }
@@ -377,6 +380,7 @@ private:
                             moveSingleMarble(middle_marble_pos, middle_destination);
                             moveSingleMarble(last_marble_pos, last_destination);
                         }
+                        mt = THREE_SLIDE;
                         return MOVE_OK;
                     }
                     else
@@ -405,6 +409,7 @@ private:
                                     moveSingleMarble(middle_marble_pos, middle_destination);
                                     moveSingleMarble(first_marble_pos, first_destination);
                                 }
+                                mt = push_one_to_water?THREE_KILL_ONE:THREE_PUSH_ONE;
                                 return MOVE_OK;
                             }
                             else
@@ -437,6 +442,7 @@ private:
                                         moveSingleMarble(middle_marble_pos, middle_destination);
                                         moveSingleMarble(first_marble_pos, first_destination);
                                     }
+                                    mt = push_two_to_water?THREE_PUSH_ONE_KILL_ONE:THREE_PUSH_TWO;
                                     return MOVE_OK;
                                 }
                                 else
@@ -453,6 +459,7 @@ private:
                                 moveSingleMarble(middle_marble_pos, middle_destination);
                                 moveSingleMarble(first_marble_pos, first_destination);
                             }
+                            mt = THREE_MOVE;
                             return MOVE_OK;
                         }
                     }
@@ -465,6 +472,8 @@ private:
 
         //int first_marble_row = row_of_cell()
     }
+
+
 
 
 public:
@@ -502,15 +511,268 @@ public:
         marbles_by_player[(int)marble].push_back(position);
         cell_marble[position]=std::pair<MarbleColor,int>(marble,inserted_position);
     }
-virtual MoveCode makeMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, bool activate)
+virtual MoveCode makeMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, MoveType& mt, bool activate)
 {
-        MoveCode result = __makeMove(color, first_marble_pos, last_marble_pos, d, activate);
-        if (result == MOVE_OK && activate)
+        MoveCode result = __makeMove(color, first_marble_pos, last_marble_pos, d,mt, activate);
+        if ((result == MOVE_OK) && activate)
         {
-            move_recorder.push_back({first_marble_pos,last_marble_pos,d});
             nextTurn();
         }
+        return result;
 }
+    MoveCode testMove(MarbleColor color, int first_marble_pos, int last_marble_pos, Direction d, MoveType& mt) const
+    {
+        assert(color!= NO_MARBLE);
+        assert(first_marble_pos >= 0);
+        assert(last_marble_pos >= 0);
+        assert(first_marble_pos < cells);
+        assert(last_marble_pos < cells);
+        mt = NO_MOVE;
+
+        if (cell_marble[first_marble_pos].first != color)
+        {
+            return (cell_marble[first_marble_pos].first == NO_MARBLE)?NO_MARBLES_TO_PUSH:OPPONENT_MARBLES;
+        }
+
+        if (first_marble_pos == last_marble_pos) // moving 1 marble
+        {
+            int destination = cell_neighbors[first_marble_pos][d];
+            if (destination == -1)
+                return SUICIDAL;
+            if (cell_marble[destination].first == color)
+                return DONT_PUSH_YOURSELF;
+            if (cell_marble[destination].first != NO_MARBLE)
+                return CANT_PUSH_IT;
+            mt = ONE_MOVE;
+            return MOVE_OK;
+        }
+        //moving 2 or more marbles...
+        for (int i=0;i<6;++i)
+        {
+            if (cell_neighbors[first_marble_pos][i] == last_marble_pos)
+            {
+                //moving 2 adjacent marbles.
+                bool sliding = true;
+                if (i == (int)d) //moving on their axis
+                {
+                    sliding = false;
+                }
+                else if (((i+3)%6) == (int)d) //moving on their axis
+                {
+                    sliding = false;
+                    //swap last and first
+                    swap_value(first_marble_pos,last_marble_pos);
+                }
+                int first_destination = cell_neighbors[first_marble_pos][d];
+                int last_destination = cell_neighbors[last_marble_pos][d];
+                if (sliding)
+                {
+
+                    if (first_destination == -1 || last_destination == -1)
+                        return SUICIDAL;
+                    if (cell_marble[first_destination].first == color || cell_marble[last_destination].first == color)
+                        return DONT_PUSH_YOURSELF;
+                    if (cell_marble[first_destination].first != NO_MARBLE || cell_marble[last_destination].first != NO_MARBLE)
+                        return CANT_PUSH_IT;
+
+                    mt = TWO_SLIDE;
+                    return MOVE_OK;
+                }
+                else
+                {
+                    if (last_destination == -1)
+                        return SUICIDAL;
+                    MarbleColor opponent_color = cell_marble[last_destination].first;
+                    if (opponent_color == color)
+                        return DONT_PUSH_YOURSELF;
+                    if (opponent_color != NO_MARBLE)
+                    {
+                        //pushing opponent's marble
+                        int after_dest = cell_neighbors[last_destination][d];
+                        bool push_one_to_water = (after_dest == -1);
+
+                        bool push_one = push_one_to_water;
+                        if (push_one_to_water == false)
+                        {
+                            push_one = (cell_marble[after_dest].first == NO_MARBLE);
+                        }
+                        if (push_one)
+                        {
+                            mt = push_one_to_water?TWO_KILL_ONE:TWO_PUSH_ONE;
+                            return MOVE_OK;
+                        }
+                        else
+                        {
+                            return CANT_PUSH_IT;
+                        }
+
+                    }
+                    else // moving to empty space
+                    {
+                        mt = TWO_MOVE;
+                        return MOVE_OK;
+                    }
+                }
+                assert(true == false);
+                return INVALID_MOVE; // should never reach here actually.
+            }
+        }
+
+        for (int i=0;i<6;++i) //try to look for 3 marbles
+        {
+            if (cell_far_neighbors[first_marble_pos][i] == last_marble_pos)
+            {
+                int middle_marble_pos = cell_neighbors[first_marble_pos][i];
+                if (cell_marble[middle_marble_pos].first == color)
+                {
+                    bool sliding = true;
+                    if (i == (int)d) //moving on their axis
+                    {
+                        sliding = false;
+                    }
+                    else if (((i+3)%6) == (int)d) //moving on their axis
+                    {
+                        sliding = false;
+                        //swap last and first
+                        swap_value(first_marble_pos,last_marble_pos);
+                    }
+                    int first_destination = cell_neighbors[first_marble_pos][d];
+                    int middle_destination = cell_neighbors[middle_marble_pos][d];
+                    int last_destination = cell_neighbors[last_marble_pos][d];
+                    if (sliding)
+                    {
+
+                        if (first_destination == -1 || middle_destination == -1 || last_destination == -1) //although middle == -1 without the others being equal to -1 is possible only in concave board
+                            return SUICIDAL;
+                        if (cell_marble[first_destination].first == color || cell_marble[middle_destination].first == color || cell_marble[last_destination].first == color)
+                            return DONT_PUSH_YOURSELF;
+                        if (cell_marble[first_destination].first != NO_MARBLE || cell_marble[middle_destination].first != NO_MARBLE || cell_marble[last_destination].first != NO_MARBLE)
+                            return CANT_PUSH_IT;
+                        mt = THREE_SLIDE;
+                        return MOVE_OK;
+                    }
+                    else
+                    {
+                        if (last_destination == -1)
+                            return SUICIDAL;
+                        MarbleColor opponent_color = cell_marble[last_destination].first;
+                        if (opponent_color == color)
+                            return DONT_PUSH_YOURSELF;
+                        if (opponent_color != NO_MARBLE)
+                        {
+                            int after_dest = cell_neighbors[last_destination][d];
+                            bool push_one_to_water = (after_dest == -1);
+
+                            bool push_one = push_one_to_water;
+                            if (push_one_to_water == false)
+                            {
+                                push_one = (cell_marble[after_dest].first == NO_MARBLE);
+                            }
+                            if (push_one)
+                            {
+                                mt = push_one_to_water?THREE_KILL_ONE:THREE_PUSH_ONE;
+                                return MOVE_OK;
+                            }
+                            else
+                            {
+                                if (cell_marble[after_dest].first == color) // try to push one but afterward there is my marble.
+                                {
+                                    return INVALID_MOVE;
+                                }
+#ifdef MULTIPLAYER_REQUIRE_PUSH_WITH_SAME_COLOR
+                                if (cell_marble[after_dest].first != opponent_color) // try to push one but afterward there is other one's marble.
+                                {
+                                    return INVALID_MOVE;
+                                }
+#endif
+                                int after_after_dest = cell_neighbors[after_dest][d];
+                                bool push_two_to_water = (after_after_dest == -1);
+
+                                bool push_two = push_two_to_water;
+                                if (push_two_to_water == false)
+                                {
+                                    push_two = (cell_marble[after_after_dest].first == NO_MARBLE);
+                                }
+                                if (push_two)
+                                {
+                                    mt = push_two_to_water?THREE_PUSH_ONE_KILL_ONE:THREE_PUSH_TWO;
+                                    return MOVE_OK;
+                                }
+                                else
+                                {
+                                    return INVALID_MOVE;
+                                }
+                            }
+                        }
+                        else //NOT PUSHING, JUST MOVING
+                        {
+                            mt = THREE_MOVE;
+                            return MOVE_OK;
+                        }
+                    }
+                }
+                return INVALID_MOVE;
+            }
+        }
+
+        return INVALID_MOVE;
+
+
+    }
+    virtual void possibleMoves(MarbleColor color, std::vector<move_record_t> &result) const
+    {
+        assert(result.empty());
+        assert(color<_NPlyr);
+        std::vector<int>::const_iterator it = marbles_by_player[color].begin();
+        std::vector<int>::const_iterator it_end = marbles_by_player[color].end();
+        MoveType mt;
+        for (;it != it_end; ++it)
+        {
+            int cell = *it;
+            if (cell < 0)
+                continue;
+            int d = 0;
+            for (;d<6;++d)
+            {
+                int neigh_pos = cell_neighbors[cell][d];
+                if(neigh_pos>=0)
+                {
+                    if (cell_marble[neigh_pos].first == NO_MARBLE)
+                    {
+                        result.push_back({cell,cell,(Direction)d,ONE_MOVE});
+                    }
+                    else if (d<3) // only on first three axis, in order to skip duplicates
+                    {
+                        if (cell_marble[neigh_pos].first == color)
+                        {
+                            for (int nd = 0 ;nd<6;++nd)
+                            {
+                                if (testMove(color,cell,neigh_pos,(Direction)nd,mt) == MOVE_OK)
+                                {
+                                    result.push_back({cell,neigh_pos,(Direction)nd,mt});
+                                }
+                            }
+                            int far_neigh = cell_far_neighbors[cell][d];
+                            if(far_neigh>=0)
+                            {
+                                if (cell_marble[far_neigh].first == color)//we got three in the same color
+                                {
+                                    for (int nd = 0 ; nd<6 ;++nd)
+                                    {
+                                        if (testMove(color,cell,far_neigh,(Direction)nd,mt) == MOVE_OK)
+                                        {
+                                            result.push_back({cell,far_neigh,(Direction)nd,mt});
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
     virtual void nextTurn()
     {
         current_turn = (MarbleColor) ((current_turn+1)%_NPlyr);
@@ -527,8 +789,8 @@ private:
 
     std::array<std::pair<MarbleColor,int>, cells> cell_marble;
     std::vector<int> marbles_by_player[_NPlyr];
-    typedef struct {int f_m; int l_m; Direction dir;} move_record_t;
-    std::vector<move_record_t> move_recorder;
+
+
     int marbles_dropped[_NPlyr];
     MarbleColor current_turn;
 

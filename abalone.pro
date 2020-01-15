@@ -6,7 +6,8 @@ LIBS += -lfann -lreadline
 
 SOURCES += main.cpp \
     BoardPrinterConsole.cpp \
-    HexDefaultPlacer.cpp
+    HexDefaultPlacer.cpp \
+    MoveRecorder.cpp
 
 HEADERS += \
     AbaloneBoard.h \
@@ -14,4 +15,5 @@ HEADERS += \
     IAbaloneBoard.h \
     HexDefaultPlacer.h \
     IPlacer.h \
-    terminal_colors.h
+    terminal_colors.h \
+    MoveRecorder.h
