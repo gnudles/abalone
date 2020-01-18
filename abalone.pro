@@ -17,3 +17,6 @@ HEADERS += \
     IPlacer.h \
     terminal_colors.h \
     MoveRecorder.h
+
+DISTFILES += \
+    original_makeMove.txt

@@ -5,6 +5,7 @@
 void BoardPrinterConsole::Print(const IAbaloneBoard* board)
 {
     int c = 0;
+    printf("\n");
     for (int i=0; i< board->numberOfRows() ; i++)
     {
 
@@ -46,13 +47,7 @@ void BoardPrinterConsole::Print(const IAbaloneBoard* board)
     {
         str="red";
     }
-    std::vector<IAbaloneBoard::move_record_t> moves;
-    board->possibleMoves(board->currentTurn(),moves);
-    printf("possible moves for you:\n");
-    for (int i=0;i<moves.size();++i)
-    {
-        printf("%d] %d-%d%s\n",i,moves[i].f_m+1,moves[i].l_m+1,IAbaloneBoard::directionLiterals[moves[i].dir]);
-    }
+
 
     printf ("Player of %s marbles, what is your move?\n",str);
 
