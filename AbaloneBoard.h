@@ -201,6 +201,26 @@ private:
 
     }
     static constexpr cells_neigh_array_t cell_far_neighbors{initializeCellFarNeighbors()};
+    static constexpr cells_neigh_array_t initializeCellRhombNeighbors()
+    {
+
+
+        cells_neigh_array_t rhomb_neigh = cells_neigh_array_t();
+        for (int i=0; i < cells ; i++)
+        {
+            for (int j = 0; j < 6; ++j)
+            {
+                rhomb_neigh[i][j]=cell_neighbors[i][j];
+                if (rhomb_neigh[i][j] != -1 )
+                {
+                    rhomb_neigh[i][j] = cell_neighbors[rhomb_neigh[i][j]][(j+1)%6];
+                }
+            }
+        }
+        return rhomb_neigh;
+
+    }
+    static constexpr cells_neigh_array_t cell_rhomb_neighbors{initializeCellRhombNeighbors()};
     static constexpr cells_array_t initializeCellRotation()
     {
         cells_array_t conv_map = cells_array_t();
@@ -309,8 +329,7 @@ public:
             marbles_dropped[i] = 0;
         }
         current_turn = BLACK;
-
-
+        last_move ={WHITE,0,0,NO_DIRECTION,NO_DIRECTION,NO_MOVE};
     }
     void addMarble(int position, MarbleColor marble){
         assert(position>=0 && position<cells);
@@ -328,7 +347,9 @@ public:
             {
                 executeMove(move);
                 nextTurn();
+                last_move = move;
             }
+
             return result;
     }
     MoveCode testMove(move_record_t & move) const
@@ -601,7 +622,7 @@ public:
     {
         return marbles_dropped[color];
     }
-    void center_of_mass(MarbleColor color, double &cx,double &cy, double &R, double &deviation)
+    void center_of_mass(MarbleColor color, double &cx,double &cy, double &R, double &deviation) const
     {
         cx = 0;
         cy = 0;
@@ -641,8 +662,12 @@ public:
         }
         deviation = sqrt(deviation);
     }
+    virtual const move_record_t& getLastMove() const
+    {
+        return last_move;
+    }
 private:
-    void ai_params_layers(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out)
+    void ai_params_layers(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
     {
         int pivot = 0;
         int dir;
@@ -669,7 +694,8 @@ private:
             out[std::string("rival-ring")+std::to_string(i)+"-count"] = count[rival_color][i-1];
         }
     }
-    void ai_params_thirds(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out)
+
+    void ai_params_thirds(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
     {
 
         int dp=0;
@@ -702,9 +728,38 @@ private:
             out[std::string("rival-third")+std::to_string(i)+"-count"] = count[rival_color][i];
         }
     }
-    void ai_params_move_count(MarbleColor color, const std::string& id, std::map<std::string,double>& out)
+    void ai_params_min_row(MarbleColor color, const std::string& id, std::map<std::string,double>& out) const
     {
-        std::vector<move_record_t> moves;
+        int axis_min[6]={rows,rows,rows};
+        int axis_max[6]={rows,rows,rows};
+        std::vector<int>::const_iterator it;
+        std::vector<int>::const_iterator it_end = marbles_by_player[my_color].end();
+        for (it = marbles_by_player[color].begin(); it != it_end;++it)
+        {
+            int pos =*it;
+            for (int i=0; i< 3; ++i)
+            {
+                int r = row_of_cell(pos);
+                if (r<axis_min[i])
+                {
+                    axis_min[i] = r;
+                }
+                if ( rows-1-r < axis_max[i])
+                {
+                    axis_max[i]=rows-1-r;
+                }
+                pos = rotatePosition(pos,1);
+            }
+        }
+        out[id+"-axis-1-min"]=axis_min[0];
+        out[id+"-axis-1-max"]=axis_max[0];
+        out[id+"-axis-2-min"]=axis_min[1];
+        out[id+"-axis-2-max"]=axis_max[1];
+        out[id+"-axis-3-min"]=axis_min[2];
+        out[id+"-axis-3-max"]=axis_max[2];
+    }
+    void ai_params_move_count(MarbleColor color, const std::string& id, std::map<std::string,double>& out, std::vector<move_record_t > &moves) const
+    {
         possibleMoves(color,moves);
         //out["number-of-my-moves"]=my_moves.size();
         int move_types_count[MT_COUNT] = {0};
@@ -723,17 +778,48 @@ private:
         out[id+"-three-kill1-count"]=move_types_count[THREE_KILL_ONE];
         out[id+"-three-push2-count"]=move_types_count[THREE_PUSH_TWO];
         out[id+"-three-kill2-count"]=move_types_count[THREE_PUSH_ONE_KILL_ONE];
+        if (id == "rival")
+        {
+            int max_kill=0;
+            const unsigned int kill_mask = (1<<TWO_KILL_ONE) |(1<<THREE_KILL_ONE)|(1<<THREE_PUSH_ONE_KILL_ONE);
+            for(int i=0;i<moves.size();++i)
+            {
+                AbaloneBoard<L,_NPlyr> x= *this;
+                x.executeMove(moves[i]);
+                std::vector<move_record_t> next_moves;
+                x.possibleMoves(color,next_moves);
+
+
+                int kill_count = 0;
+                for (int nm=0;nm<next_moves.size();++nm)
+                {
+
+                    if ((kill_mask&(1<<next_moves[nm].mt))!=0)
+                    {
+                        kill_count++;
+                    }
+                }
+                if (kill_count > max_kill)
+                    max_kill = kill_count;
+            }
+            out["rival-next-max-kill"]=max_kill;
+        }
     }
-    void ai_neigh_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out)
+    void ai_neigh_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
     {
         std::vector<int>::const_iterator it;
         std::vector<int>::const_iterator it_end = marbles_by_player[my_color].end();
         int near_count = 0;
         int far_count = 0;
+        int rhomb_count = 0;
+        int my_triple_count = 0;
         int me_rival_near_count = 0;
         int me_rival_far_count = 0;
+        int me_rival_rhomb_count = 0;
         int rival_near_count = 0;
         int rival_far_count = 0;
+        int rival_rhomb_count = 0;
+        int rival_triple_count = 0;
         for (it = marbles_by_player[my_color].begin(); it != it_end;++it)
         {
             int pos = *it;
@@ -743,13 +829,19 @@ private:
                 {
                     int near_pos = cell_neighbors[pos][i];
                     int far_pos= cell_far_neighbors[pos][i];
+                    int rhomb_pos = cell_rhomb_neighbors[pos][i];
+                    bool had_near =false;
+                    bool had_far =false;
 
                     if (near_pos>=0)
                     {
                         if (cell_marble[near_pos].first==my_color)
                         {
                             if (i<3)
+                            {
                                 near_count++;
+                                had_near =true;
+                            }
                         }
                         else
                             if(cell_marble[near_pos].first!=NO_MARBLE)
@@ -762,12 +854,34 @@ private:
                         if (cell_marble[far_pos].first == my_color)
                         {
                             if (i<3)
+                            {
                                 far_count++;
+                                had_far = true;
+                            }
                         }
                         else
                             if(cell_marble[far_pos].first!=NO_MARBLE)
                             {
                                 me_rival_far_count++;
+                            }
+                    }
+                    if (had_near && had_far)//triple
+                    {
+                        my_triple_count++;
+                    }
+                    if (rhomb_pos>=0)
+                    {
+                        if (cell_marble[rhomb_pos].first==my_color)
+                        {
+                            if (i<3)
+                            {
+                                rhomb_count++;
+                            }
+                        }
+                        else
+                            if(cell_marble[rhomb_pos].first!=NO_MARBLE)
+                            {
+                                me_rival_rhomb_count++;
                             }
                     }
                 }
@@ -783,12 +897,16 @@ private:
                 {
                     int near_pos = cell_neighbors[pos][i];
                     int far_pos= cell_far_neighbors[pos][i];
+                    int rhomb_pos = cell_rhomb_neighbors[pos][i];
+                    bool had_near =false;
+                    bool had_far =false;
 
                     if (near_pos>=0)
                     {
                         if (cell_marble[near_pos].first==rival_color)
                         {
                             rival_near_count++;
+                            had_near = true;
                         }
 
                     }
@@ -797,6 +915,18 @@ private:
                         if (cell_marble[far_pos].first == rival_color)
                         {
                             rival_far_count++;
+                            had_far = true;
+                        }
+                    }
+                    if (had_near && had_far)
+                    {
+                        rival_triple_count++;
+                    }
+                    if (rhomb_pos >= 0)
+                    {
+                        if (cell_marble[rhomb_pos].first == rival_color)
+                        {
+                            rival_rhomb_count++;
                         }
                     }
                 }
@@ -804,13 +934,18 @@ private:
         }
         out["my-total-neighbors"]= near_count;
         out["my-total-far-neighbors"]= far_count;
+        out["my-total-rhomb-neighbors"]= rhomb_count;
+        out["my-triples-count"]= my_triple_count;
         out["cross-total-neighbors"]= me_rival_near_count;
         out["cross-total-far-neighbors"]= me_rival_far_count;
+        out["cross-total-rhomb-neighbors"]= me_rival_rhomb_count;
         out["rival-total-neighbors"]= rival_near_count;
         out["rival-total-far-neighbors"]= rival_far_count;
+        out["rival-triples-count"]= rival_triple_count;
+        out["rival-total-rhomb-neighbors"]= rival_rhomb_count;
     }
 public:
-    void ai_params(MarbleColor my_color, std::map<std::string,double>& out)
+    void ai_params(MarbleColor my_color, std::map<std::string,double>& ai_vec, std::vector<move_record_t > &moves) const
     {
         assert(_NPlyr == 2);
         MarbleColor rival_color=(my_color==BLACK)?WHITE:BLACK;
@@ -819,28 +954,33 @@ public:
         double rival_cx,rival_cy,rival_R,rival_deviation;
         center_of_mass(rival_color, rival_cx,rival_cy,rival_R,rival_deviation);
         double distance_me_rival = sqrt((my_cx - rival_cx)*(my_cx - rival_cx) + (my_cy-rival_cy)*(my_cy-rival_cy));
-        out["my-distance-from-center"]=my_R;
-        out["my-deviation"]=my_deviation;
-        out["rival-distance-from-center"]=rival_R;
-        out["rival-deviation"]=rival_deviation;
-        out["distance-between-me-rival"]=distance_me_rival;
-        out["my-lost-dears"]=marbles_dropped[my_color];
-        out["rival-lost-dears"]=marbles_dropped[rival_color];
-        ai_params_move_count(my_color, "my", out);
-        ai_params_move_count(rival_color, "rival", out);
-        ai_params_thirds(my_color,rival_color,out);
-        ai_params_layers(my_color,rival_color,out);
-        ai_neigh_count( my_color, rival_color,  out);
+        ai_vec["my-distance-from-center"]=my_R;
+        ai_vec["my-deviation"]=my_deviation;
+        ai_vec["rival-distance-from-center"]=rival_R;
+        ai_vec["rival-deviation"]=rival_deviation;
+        ai_vec["distance-between-me-rival"]=distance_me_rival;
+        ai_vec["my-lost-dears"]=marbles_dropped[my_color];
+        ai_vec["rival-lost-dears"]=marbles_dropped[rival_color];
+        ai_params_move_count(my_color, "my", ai_vec, moves);
+        std::vector<move_record_t > rival_moves;
+        ai_params_move_count(rival_color, "rival", ai_vec,rival_moves);
+        ai_params_thirds(my_color,rival_color,ai_vec);
+        ai_params_layers(my_color,rival_color,ai_vec);
+        ai_neigh_count( my_color, rival_color,  ai_vec);
+        ai_params_min_row(my_color, "my", ai_vec);
+        ai_params_min_row(rival_color, "rival", ai_vec);
+
 
     }
 private:
 
     std::array<std::pair<MarbleColor,int>, cells> cell_marble;
     std::vector<int> marbles_by_player[_NPlyr];
-
+    move_record_t last_move;
 
     int marbles_dropped[_NPlyr];
     MarbleColor current_turn;
+
 
 };
 

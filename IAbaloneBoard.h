@@ -2,6 +2,8 @@
 #define IABALONEBOARD_H
 
 #include <vector>
+#include <map>
+#include <string>
 
 class IAbaloneBoard
 {
@@ -36,6 +38,8 @@ public:
     virtual MarbleColor currentTurn() const = 0;
     virtual int takenDown(MarbleColor color) const = 0;
     virtual void possibleMoves(MarbleColor color, std::vector<move_record_t > &result) const = 0;
+    virtual const move_record_t& getLastMove() const = 0;
+    virtual void ai_params(MarbleColor my_color, std::map<std::string,double>& ai_vec, std::vector<move_record_t > &moves) const = 0;
 };
 
 #endif // IABALONEBOARD_H
