@@ -25,3 +25,8 @@ HEADERS += \
 
 DISTFILES += \
     original_makeMove.txt
+
+unix {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libxml++-2.6
+}

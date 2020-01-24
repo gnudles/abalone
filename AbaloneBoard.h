@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "IAbaloneBoard.h"
+#define TRIANGLE_HEIGHT 0.86602540378443864676372317f
 template<typename T>
 inline void swap_value(T& a, T& b)
 {
@@ -122,8 +123,8 @@ private:
         {
             int r = row_of_cell[i];
             int clmn = pos_in_row_of_cell[i];
-            float x=-(edge_length-1) + clmn + fabs(r-(edge_length-1))*0.5;
-            float y=(r-(edge_length-1))*0.86602540378443864676372317f;
+            float x=-(edge_length-1) + clmn + fabsf(r-(edge_length-1))*0.5;
+            float y=(r-(edge_length-1))*TRIANGLE_HEIGHT;
             coords[i][0]=x;
             coords[i][1]=y;
         }
@@ -313,6 +314,8 @@ public:
     }
     virtual int rotatePosition(int position, int rotation) const
     {
+        if (rotation<0)
+            rotation += 6;
         for (int i =0; i<rotation;++i)
             position = rotated_cells[position];
         return position;
@@ -622,14 +625,113 @@ public:
     {
         return marbles_dropped[color];
     }
-    void center_of_mass(MarbleColor color, double &cx,double &cy, double &R, double &deviation) const
+    void getClusters(MarbleColor color,std::vector<std::vector<int> > & clusters) const
+    {
+        assert(clusters.empty());
+        std::vector<int> m_in_g;
+        std::vector<int> g_of_m;
+
+        std::vector<int>::const_iterator it;
+        std::vector<int>::const_iterator it_end = marbles_by_player[color].end();
+        int g = 0;
+        for (it = marbles_by_player[color].begin(); it != it_end;++it)
+        {
+            bool exists = (*it>=0);
+            g_of_m.push_back(g);
+            m_in_g.push_back(exists?1:0);
+            g++;
+        }
+        int i = 0;
+        for (it = marbles_by_player[color].begin(); it != it_end;++it,++i)
+        {
+            if (*it>=0)
+            for (int d =0 ;d< 3 ;++d)
+            {
+                int neigh = cell_neighbors[*it][d];
+                if (neigh>=0)
+                {
+                    if (cell_marble[neigh].first == color)
+                    {
+                        int neigh_m = cell_marble[neigh].second;
+                        int neigh_g = g_of_m[neigh_m];
+                        int my_g = g_of_m[i];
+                        if (my_g!=neigh_g)
+                        {
+
+                            if (m_in_g[neigh_g] == 1)
+                            {
+                                g_of_m[neigh_m] = my_g;
+                                m_in_g[neigh_g]--;
+                                m_in_g[my_g]++;
+                            }
+                            else
+                            {
+                                if (m_in_g[my_g] == 1)
+                                {
+                                    g_of_m[i] = neigh_g;
+                                    m_in_g[my_g]--;
+                                    m_in_g[neigh_g]++;
+                                }
+                                int from_g;
+                                int to_g;
+                                if (m_in_g[my_g]>=m_in_g[neigh_g])
+                                {
+                                    from_g = neigh_g;
+                                    to_g = my_g;
+                                }
+                                else
+                                {
+                                    from_g = my_g;
+                                    to_g = neigh_g;
+                                }
+                                for (int m = 0; m< g_of_m.size();m++)
+                                {
+                                    if (g_of_m[m] == from_g)
+                                    {
+                                        g_of_m[m] = to_g;
+                                        m_in_g[from_g]--;
+                                        m_in_g[to_g]++;
+                                        if (m_in_g[from_g] == 0)
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        std::map<int,std::vector<int> > clusters_map;
+        std::map<int,std::vector<int> >::iterator map_iter;
+        for (int m =0; m < g_of_m.size(); ++m)
+        {
+            if (marbles_by_player[color][m]>=0)
+            {
+                if (m_in_g[g_of_m[m]]>0)
+                {
+                    map_iter = clusters_map.find(g_of_m[m]);
+                    if (map_iter== clusters_map.end())
+                    {
+                        clusters_map[ g_of_m[m] ] = std::vector<int>();
+                    }
+                    clusters_map[ g_of_m[m] ].push_back(marbles_by_player[color][m]);
+                }
+            }
+        }
+        for (map_iter = clusters_map.begin(); map_iter!= clusters_map.end() ;++map_iter)
+        {
+            clusters.push_back((*map_iter).second);
+
+        }
+    }
+    void center_of_mass(const std::vector<int> & positions, float &cx, float &cy, float &R, float &deviation) const
     {
         cx = 0;
         cy = 0;
         std::vector<int>::const_iterator it;
-        std::vector<int>::const_iterator it_end = marbles_by_player[color].end();
+        std::vector<int>::const_iterator it_end = positions.end();
         int count = 0;
-        for (it = marbles_by_player[color].begin(); it != it_end;++it)
+        for (it = positions.begin(); it != it_end;++it)
         {
             int pos = *it;
             if (pos>=0)
@@ -646,13 +748,13 @@ public:
         }
         R = sqrt(cx*cx+cy*cy);
         deviation = 0;
-        for (it = marbles_by_player[color].begin(); it != it_end;++it)
+        for (it = positions.begin(); it != it_end;++it)
         {
             int pos = *it;
             if (pos>=0)
             {
-                double diffx=cx-cartesian_coordinates[pos][0];
-                double diffy=cy-cartesian_coordinates[pos][1];
+                float diffx=cx-cartesian_coordinates[pos][0];
+                float diffy=cy-cartesian_coordinates[pos][1];
                 deviation+=diffx*diffx+diffy*diffy;
             }
         }
@@ -660,48 +762,66 @@ public:
         {
             deviation/=count;
         }
-        deviation = sqrt(deviation);
+        deviation = sqrtf(deviation);
     }
     virtual const move_record_t& getLastMove() const
     {
         return last_move;
     }
 private:
-    void ai_params_layers(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
+    void ai_params_layers(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out, int revision) const
     {
         int pivot = 0;
         int dir;
-        int count[2][edge_length];
+        float count[2][edge_length];
         for (int i = edge_length; i>0;--i)
         {
+            int total_in_ring = 0;
             count[0][i-1] = 0;
             count[1][i-1] = 0;
             dir = RIGHT;
-            for (int j=0;j<6;++j)
+            if (i == 1)
             {
-                for(int k=0;k<i-1;++k)
+                if (cell_marble[pivot].first !=NO_MARBLE)
                 {
-                    if (cell_marble[pivot].first !=NO_MARBLE)
-                    {
-                        count[cell_marble[pivot].first][i-1]++;
-                    }
-                    pivot=cell_neighbors[pivot][dir];
+                    count[cell_marble[pivot].first][i-1]++;
                 }
-                dir=(dir+1)%6;
+                total_in_ring++;
             }
-            pivot = cell_neighbors[pivot][DOWN_RIGHT];
+            else
+            {
+                for (int j=0;j<6;++j)
+                {
+                    for(int k=0;k<i-1;++k)
+                    {
+                        if (cell_marble[pivot].first !=NO_MARBLE)
+                        {
+                            count[cell_marble[pivot].first][i-1]++;
+                        }
+                        total_in_ring++;
+                        pivot=cell_neighbors[pivot][dir];
+                    }
+                    dir=(dir+1)%6;
+                }
+                pivot = cell_neighbors[pivot][DOWN_RIGHT];
+            }
+            if (revision>=1)
+            {
+                count[my_color][i-1]/=(float)total_in_ring;
+                count[rival_color][i-1]/=(float)total_in_ring;
+            }
             out[std::string("my-ring")+std::to_string(i)+"-count"] = count[my_color][i-1];
             out[std::string("rival-ring")+std::to_string(i)+"-count"] = count[rival_color][i-1];
         }
     }
 
-    void ai_params_thirds(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
+    void ai_params_thirds(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out, int revision) const
     {
 
         int dp=0;
         int pivot;
         int rot_pivot;
-        int count[2][6]={{0},{0}};
+        float count[2][6]={{0},{0}};
 
         for (int i=0; i < edge_length; ++i)
         {
@@ -724,22 +844,27 @@ private:
         }
         for (int i = 0; i < 6; ++i)
         {
+            if (revision>=1)
+            {
+                count[my_color][i]/=16.0;
+                count[rival_color][i]/=16.0;
+            }
             out[std::string("my-third")+std::to_string(i)+"-count"] = count[my_color][i];
             out[std::string("rival-third")+std::to_string(i)+"-count"] = count[rival_color][i];
         }
     }
-    void ai_params_min_row(MarbleColor color, const std::string& id, std::map<std::string,double>& out) const
+    void ai_params_min_row(MarbleColor color, const std::string& id, std::map<std::string,float>& out, int revision) const
     {
-        int axis_min[6]={rows,rows,rows};
-        int axis_max[6]={rows,rows,rows};
+        float axis_min[6]={rows,rows,rows};
+        float axis_max[6]={rows,rows,rows};
         std::vector<int>::const_iterator it;
-        std::vector<int>::const_iterator it_end = marbles_by_player[my_color].end();
+        std::vector<int>::const_iterator it_end = marbles_by_player[color].end();
         for (it = marbles_by_player[color].begin(); it != it_end;++it)
         {
             int pos =*it;
             for (int i=0; i< 3; ++i)
             {
-                int r = row_of_cell(pos);
+                int r = row_of_cell[pos];
                 if (r<axis_min[i])
                 {
                     axis_min[i] = r;
@@ -751,6 +876,15 @@ private:
                 pos = rotatePosition(pos,1);
             }
         }
+        if (revision>=1)
+        {
+            axis_min[0]/=16.0;
+            axis_max[0]/=16.0;
+            axis_min[1]/=16.0;
+            axis_max[1]/=16.0;
+            axis_min[2]/=16.0;
+            axis_max[2]/=16.0;
+        }
         out[id+"-axis-1-min"]=axis_min[0];
         out[id+"-axis-1-max"]=axis_max[0];
         out[id+"-axis-2-min"]=axis_min[1];
@@ -758,14 +892,19 @@ private:
         out[id+"-axis-3-min"]=axis_min[2];
         out[id+"-axis-3-max"]=axis_max[2];
     }
-    void ai_params_move_count(MarbleColor color, const std::string& id, std::map<std::string,double>& out, std::vector<move_record_t > &moves) const
+    void ai_params_move_count(MarbleColor color, const std::string& id, std::map<std::string,float>& out, std::vector<move_record_t > &moves, int revision) const
     {
         possibleMoves(color,moves);
         //out["number-of-my-moves"]=my_moves.size();
-        int move_types_count[MT_COUNT] = {0};
+        float move_types_count[MT_COUNT] = {0};
+        float adder;
+        if (revision==0)
+            adder = 1.0;
+        else
+            adder = 0.125;
         for(int i=0; i< moves.size(); ++i)
         {
-            move_types_count[moves[i].mt]++;
+            move_types_count[moves[i].mt]+=adder;
         }
         out[id+"-one-move-count"]=move_types_count[ONE_MOVE];
         out[id+"-two-slide-count"]=move_types_count[TWO_SLIDE];
@@ -781,6 +920,7 @@ private:
         if (id == "rival")
         {
             int max_kill=0;
+            int total_kill=0;
             const unsigned int kill_mask = (1<<TWO_KILL_ONE) |(1<<THREE_KILL_ONE)|(1<<THREE_PUSH_ONE_KILL_ONE);
             for(int i=0;i<moves.size();++i)
             {
@@ -801,32 +941,72 @@ private:
                 }
                 if (kill_count > max_kill)
                     max_kill = kill_count;
+                if (kill_count>0)
+                    total_kill++;
             }
             out["rival-next-max-kill"]=max_kill;
+            if (revision>=1)
+            {
+                out["rival-next-max-kill"]/=4.0;
+                out["rival-next-total-kill"]=(float)total_kill/32.0;
+            }
         }
     }
-    void ai_neigh_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,double>& out) const
+
+    void ai_clusters_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out) const
+    {
+        std::vector<std::vector<int>> my_clusters;
+        std::vector<std::vector<int>> rival_clusters;
+        getClusters(my_color,my_clusters);
+        getClusters(rival_color,rival_clusters);
+
+        out["my-number-of-clusters"] = (float)my_clusters.size()/4.0;
+
+        out["rival-number-of-clusters"] = (float)rival_clusters.size()/4.0;
+
+/*
+
+        float my_cx,my_cy,my_R,my_deviation;
+        center_of_mass(marbles_by_player[my_color], my_cx,my_cy,my_R,my_deviation);
+        float rival_cx,rival_cy,rival_R,rival_deviation;
+        center_of_mass(marbles_by_player[rival_color], rival_cx,rival_cy,rival_R,rival_deviation);
+
+        float distance_me_rival = sqrtf((my_cx - rival_cx)*(my_cx - rival_cx) + (my_cy-rival_cy)*(my_cy-rival_cy));
+        ai_vec["my-distance-from-center"]=my_R;
+        ai_vec["my-deviation"]=my_deviation;
+        ai_vec["rival-distance-from-center"]=rival_R;
+        ai_vec["rival-deviation"]=rival_deviation;
+*/
+    }
+    void ai_neigh_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out, int revision) const
     {
         std::vector<int>::const_iterator it;
         std::vector<int>::const_iterator it_end = marbles_by_player[my_color].end();
-        int near_count = 0;
-        int far_count = 0;
-        int rhomb_count = 0;
-        int my_triple_count = 0;
-        int me_rival_near_count = 0;
-        int me_rival_far_count = 0;
-        int me_rival_rhomb_count = 0;
-        int rival_near_count = 0;
-        int rival_far_count = 0;
-        int rival_rhomb_count = 0;
-        int rival_triple_count = 0;
+        float near_count = 0;
+        float far_count = 0;
+        float rhomb_count = 0;
+        float my_triple_count[3] = {0};
+        float me_rival_near_count = 0;
+        float me_rival_far_count = 0;
+        float me_rival_rhomb_count = 0;
+        float rival_near_count = 0;
+        float rival_far_count = 0;
+        float rival_rhomb_count = 0;
+        float rival_triple_count[3] = {0};
+        float count_friendly_neigh[7]={0};
+        float count_foe_neigh[7]={0};
+        float rival_count_friendly_neigh[7]={0};
+        float rival_count_foe_neigh[7]={0};
         for (it = marbles_by_player[my_color].begin(); it != it_end;++it)
         {
             int pos = *it;
             if (pos>=0)
             {
+                int my_neigh_single_marble_count_friendly = 0;
+                int my_neigh_single_marble_count_foe = 0;
                 for (int i = 0; i<6; ++i)
                 {
+
                     int near_pos = cell_neighbors[pos][i];
                     int far_pos= cell_far_neighbors[pos][i];
                     int rhomb_pos = cell_rhomb_neighbors[pos][i];
@@ -837,6 +1017,7 @@ private:
                     {
                         if (cell_marble[near_pos].first==my_color)
                         {
+                            my_neigh_single_marble_count_friendly++;
                             if (i<3)
                             {
                                 near_count++;
@@ -846,6 +1027,7 @@ private:
                         else
                             if(cell_marble[near_pos].first!=NO_MARBLE)
                             {
+                                my_neigh_single_marble_count_foe++;
                                 me_rival_near_count++;
                             }
                     }
@@ -867,7 +1049,7 @@ private:
                     }
                     if (had_near && had_far)//triple
                     {
-                        my_triple_count++;
+                        my_triple_count[i]++;
                     }
                     if (rhomb_pos>=0)
                     {
@@ -885,6 +1067,8 @@ private:
                             }
                     }
                 }
+                count_friendly_neigh[my_neigh_single_marble_count_friendly]++;
+                count_foe_neigh[my_neigh_single_marble_count_foe]++;
             }
         }
         it_end = marbles_by_player[rival_color].end();
@@ -893,7 +1077,9 @@ private:
             int pos = *it;
             if (pos>=0)
             {
-                for (int i = 0; i<3; ++i)
+                int rival_neigh_single_marble_count_friendly = 0;
+                int rival_neigh_single_marble_count_foe = 0;
+                for (int i = 0; i<6; ++i)
                 {
                     int near_pos = cell_neighbors[pos][i];
                     int far_pos= cell_far_neighbors[pos][i];
@@ -903,73 +1089,147 @@ private:
 
                     if (near_pos>=0)
                     {
+
                         if (cell_marble[near_pos].first==rival_color)
                         {
-                            rival_near_count++;
-                            had_near = true;
+                            if (i<3)
+                            {
+                                rival_near_count++;
+                                had_near = true;
+                            }
+                            rival_neigh_single_marble_count_friendly++;
                         }
+                        else
+                            if(cell_marble[near_pos].first!=NO_MARBLE)
+                            {
+                                rival_neigh_single_marble_count_foe++;
+                            }
 
                     }
                     if (far_pos >= 0)
                     {
+
                         if (cell_marble[far_pos].first == rival_color)
                         {
-                            rival_far_count++;
-                            had_far = true;
+                            if (i<3)
+                            {
+                                rival_far_count++;
+                                had_far = true;
+                            }
                         }
                     }
                     if (had_near && had_far)
                     {
-                        rival_triple_count++;
+                        rival_triple_count[i]++;
                     }
                     if (rhomb_pos >= 0)
                     {
+
                         if (cell_marble[rhomb_pos].first == rival_color)
                         {
-                            rival_rhomb_count++;
+                            if (i<3)
+                                rival_rhomb_count++;
                         }
                     }
                 }
+                rival_count_foe_neigh[rival_neigh_single_marble_count_foe]++;
+                rival_count_friendly_neigh[rival_neigh_single_marble_count_friendly]++;
             }
+        }
+
+        if (revision>=1)
+        {
+            for (int i=0 ; i<7; ++i)
+            {
+                out["my-marbles-with-"+std::to_string(i)+"-friendly-neighbors"]= count_friendly_neigh[i]/8.0;
+                out["my-marbles-with-"+std::to_string(i)+"-foe-neighbors"]= count_foe_neigh[i]/8.0;
+                out["rival-marbles-with-"+std::to_string(i)+"-friendly-neighbors"]= rival_count_friendly_neigh[i]/8.0;
+                out["rival-marbles-with-"+std::to_string(i)+"-foe-neighbors"]= rival_count_foe_neigh[i]/8.0;
+            }
+            near_count/=32.0;
+            far_count/=16.0;
+            rhomb_count/=16.0;
+            rival_near_count/=32.0;
+            rival_far_count/=16.0;
+            rival_rhomb_count/=16.0;
+            my_triple_count[0]/=8.0;
+            my_triple_count[1]/=8.0;
+            my_triple_count[2]/=8.0;
+            rival_triple_count[0]/=8.0;
+            rival_triple_count[1]/=8.0;
+            rival_triple_count[2]/=8.0;
+            me_rival_near_count/=8.0;
+            me_rival_rhomb_count/=8.0;
+            me_rival_far_count/=8.0;
         }
         out["my-total-neighbors"]= near_count;
         out["my-total-far-neighbors"]= far_count;
         out["my-total-rhomb-neighbors"]= rhomb_count;
-        out["my-triples-count"]= my_triple_count;
+        out["my-triples-count-axis1"]= my_triple_count[0];
+        out["my-triples-count-axis2"]= my_triple_count[1];
+        out["my-triples-count-axis3"]= my_triple_count[2];
         out["cross-total-neighbors"]= me_rival_near_count;
         out["cross-total-far-neighbors"]= me_rival_far_count;
         out["cross-total-rhomb-neighbors"]= me_rival_rhomb_count;
         out["rival-total-neighbors"]= rival_near_count;
         out["rival-total-far-neighbors"]= rival_far_count;
-        out["rival-triples-count"]= rival_triple_count;
+        out["rival-triples-count-axis1"]= rival_triple_count[0];
+        out["rival-triples-count-axis2"]= rival_triple_count[1];
+        out["rival-triples-count-axis3"]= rival_triple_count[2];
         out["rival-total-rhomb-neighbors"]= rival_rhomb_count;
     }
 public:
-    void ai_params(MarbleColor my_color, std::map<std::string,double>& ai_vec, std::vector<move_record_t > &moves) const
+    void ai_params(MarbleColor my_color, std::map<std::string,float>& ai_vec, std::vector<move_record_t > &moves, bool before, int revision) const
     {
         assert(_NPlyr == 2);
         MarbleColor rival_color=(my_color==BLACK)?WHITE:BLACK;
-        double my_cx,my_cy,my_R,my_deviation;
-        center_of_mass(my_color, my_cx,my_cy,my_R,my_deviation);
-        double rival_cx,rival_cy,rival_R,rival_deviation;
-        center_of_mass(rival_color, rival_cx,rival_cy,rival_R,rival_deviation);
-        double distance_me_rival = sqrt((my_cx - rival_cx)*(my_cx - rival_cx) + (my_cy-rival_cy)*(my_cy-rival_cy));
+        float my_cx,my_cy,my_R,my_deviation;
+        center_of_mass(marbles_by_player[my_color], my_cx,my_cy,my_R,my_deviation);
+        float rival_cx,rival_cy,rival_R,rival_deviation;
+        center_of_mass(marbles_by_player[rival_color], rival_cx,rival_cy,rival_R,rival_deviation);
+        float distance_me_rival = sqrtf((my_cx - rival_cx)*(my_cx - rival_cx) + (my_cy-rival_cy)*(my_cy-rival_cy));
+        if (revision>=1)
+        {
+            my_R/=8.0;
+            my_deviation/=8.0;
+            rival_R/=8.0;
+            rival_deviation/=8.0;
+            distance_me_rival/=8.0;
+        }
         ai_vec["my-distance-from-center"]=my_R;
         ai_vec["my-deviation"]=my_deviation;
         ai_vec["rival-distance-from-center"]=rival_R;
         ai_vec["rival-deviation"]=rival_deviation;
+        //if (rival)
         ai_vec["distance-between-me-rival"]=distance_me_rival;
-        ai_vec["my-lost-dears"]=marbles_dropped[my_color];
+        if (revision == 0
+                || (revision>=1 && before))
+            ai_vec["my-lost-dears"]=marbles_dropped[my_color];
         ai_vec["rival-lost-dears"]=marbles_dropped[rival_color];
-        ai_params_move_count(my_color, "my", ai_vec, moves);
+        if (revision>=1)
+        {
+            if (before)
+                ai_vec["my-lost-dears"]/=8.0;
+            ai_vec["rival-lost-dears"]/=8.0;
+        }
+        ai_params_move_count(my_color, "my", ai_vec, moves,revision);
         std::vector<move_record_t > rival_moves;
-        ai_params_move_count(rival_color, "rival", ai_vec,rival_moves);
-        ai_params_thirds(my_color,rival_color,ai_vec);
-        ai_params_layers(my_color,rival_color,ai_vec);
-        ai_neigh_count( my_color, rival_color,  ai_vec);
-        ai_params_min_row(my_color, "my", ai_vec);
-        ai_params_min_row(rival_color, "rival", ai_vec);
+        ai_params_move_count(rival_color, "rival", ai_vec,rival_moves,revision);
+        ai_params_thirds(my_color,rival_color,ai_vec,revision);
+        ai_params_layers(my_color,rival_color,ai_vec,revision);
+        ai_neigh_count( my_color, rival_color,  ai_vec, revision);
+        ai_params_min_row(my_color, "my", ai_vec,revision);
+        ai_params_min_row(rival_color, "rival", ai_vec,revision);
 
+
+        if (revision>0)
+        {
+            ai_clusters_count(my_color,rival_color,ai_vec);
+            const unsigned int kill_mask = (1<<IAbaloneBoard::TWO_KILL_ONE) |(1<<IAbaloneBoard::THREE_KILL_ONE)|(1<<IAbaloneBoard::THREE_PUSH_ONE_KILL_ONE);
+            const unsigned int push_mask = (1<<IAbaloneBoard::TWO_PUSH_ONE) |(1<<IAbaloneBoard::THREE_PUSH_ONE)|(1<<IAbaloneBoard::THREE_PUSH_TWO);
+            ai_vec["last-move-kill"]=(((1<<last_move.mt)&  kill_mask) !=0 )?1:0;
+            ai_vec["last-move-push"]=(((1<<last_move.mt)&  push_mask) !=0 )?1:0;
+        }
 
     }
 private:
@@ -980,6 +1240,7 @@ private:
 
     int marbles_dropped[_NPlyr];
     MarbleColor current_turn;
+    friend class MoveRecorder;
 
 
 };

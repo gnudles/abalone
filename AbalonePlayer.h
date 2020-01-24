@@ -4,7 +4,8 @@
 class AbalonePlayer
 {
 public:
+    virtual ~AbalonePlayer(){}
     virtual IAbaloneBoard::move_record_t getMove(const IAbaloneBoard &board) = 0;
-    virtual void control(const std::string &cmd){}
+    virtual void control(const std::string &cmd, void* data){}
 };
 #endif // ABALONEPLAYER_H
