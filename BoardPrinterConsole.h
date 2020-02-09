@@ -7,7 +7,7 @@ class IAbaloneBoard;
 class BoardPrinterConsole
 {
 public:
-    virtual void Print(const IAbaloneBoard* board);
+    virtual void Print(const IAbaloneBoard& board);
 };
 
 #endif // BOARDPRINTERCONSOLE_H

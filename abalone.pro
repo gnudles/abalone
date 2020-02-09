@@ -6,22 +6,28 @@ LIBS += -lfann -lreadline
 
 SOURCES += main.cpp \
     BoardPrinterConsole.cpp \
-    HexDefaultPlacer.cpp \
     MoveRecorder.cpp \
     AIPlayer.cpp \
-    HumanConsolePlayer.cpp
+    HumanConsolePlayer.cpp \
+    DefaultPlacer.cpp \
+    OffBoardPlacer.cpp \
+    BelgianDaisyPlacer.cpp \
+    BoardFactory.cpp
 
 HEADERS += \
     AbaloneBoard.h \
     BoardPrinterConsole.h \
     IAbaloneBoard.h \
-    HexDefaultPlacer.h \
     IPlacer.h \
     terminal_colors.h \
     MoveRecorder.h \
     AIPlayer.h \
     HumanConsolePlayer.h \
-    AbalonePlayer.h
+    AbalonePlayer.h \
+    DefaultPlacer.h \
+    OffBoardPlacer.h \
+    BelgianDaisyPlacer.h \
+    BoardFactory.h
 
 DISTFILES += \
     original_makeMove.txt

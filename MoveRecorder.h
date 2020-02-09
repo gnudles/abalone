@@ -15,14 +15,18 @@ public:
             if (initial_position[cell]!= IAbaloneBoard::NO_MARBLE)
                 board->addMarble(cell, initial_position[cell]);
         }
+        if ( num_players!=0)
+            board->setNumberOfPlayers(num_players);
     }
-    void recordInitialPosition(const IAbaloneBoard * board)
+    void recordInitialPosition(const IAbaloneBoard & board)
     {
         int cell = 0;
-        for (; cell< board->numberOfCells(); ++cell)
+        for (; cell< board.numberOfCells(); ++cell)
         {
-            initial_position.push_back(board->getMarbleAt(cell));
+            initial_position.push_back(board.getMarbleAt(cell));
         }
+        num_players = board.numberOfPlayers();
+        board_size = board.hexagonEdgeLength();
     }
     void addMove(const IAbaloneBoard::move_record_t& move)
     {
@@ -46,6 +50,8 @@ public:
 private:
     std::vector<IAbaloneBoard::move_record_t> move_recorder;
     std::vector<IAbaloneBoard::MarbleColor> initial_position;
+    int num_players;
+    int board_size;
 };
 
 #endif // MOVERECORDER_H

@@ -1,12 +1,15 @@
 #ifndef ABALONEBOARD_H
 #define ABALONEBOARD_H
+#define SECRET_ABALONE_BOARD_CLASS
+#ifdef  SECRET_ABALONE_BOARD_CLASS
 #include <array>
 #include <assert.h>
 #include <map>
 #include <math.h>
 
 #include "IAbaloneBoard.h"
-#define TRIANGLE_HEIGHT 0.86602540378443864676372317f
+
+
 template<typename T>
 inline void swap_value(T& a, T& b)
 {
@@ -14,11 +17,11 @@ inline void swap_value(T& a, T& b)
     b^=a;
     a^=b;
 }
-template <int L, int _NPlyr>
+template <int L>
 class AbaloneBoard : public IAbaloneBoard
 {
-    static_assert(_NPlyr == 2 || _NPlyr == 3, "Number of players must be either 2 or 3!");
-    static_assert(L == 5, "Currently only support edges of 5.");
+    //static_assert(_NPlyr == 2 || _NPlyr == 3, "Number of players must be either 2 or 3!");
+    static_assert(L >=5 && L<=8, "Currently only support edges of 5-8");
 public:
 
     static constexpr int edge_length = L;
@@ -27,7 +30,7 @@ public:
     virtual int numberOfRows() const {return rows;}
     virtual int numberOfCells() const {return cells;}
     virtual int hexagonEdgeLength() const {return edge_length;}
-    virtual int numberOfPlayers() const {return _NPlyr;}
+    virtual int numberOfPlayers() const {return _nPlyr;}
     virtual std::vector<int> cellsInRow() const { std::vector<int> res; res.assign(cells_in_row.cbegin(),cells_in_row.cend()); return res;}
 
 
@@ -225,7 +228,7 @@ private:
     static constexpr cells_array_t initializeCellRotation()
     {
         cells_array_t conv_map = cells_array_t();
-        int pos = 4;
+        int pos = edge_length - 1;
         int c = 0;
         for (int i=0; i< rows ; i++)
         {
@@ -262,15 +265,13 @@ private:
             cell_marble[to].first = color;
             cell_marble[to].second = index;
         }
-        else
-        {
-            marbles_dropped[color]++;
-        }
+
 
     }
 
-
-    void executeMove(const move_record_t &move)
+public:
+    //use this only after running testMove
+    void _executeMove(const move_record_t &move)
     {
         const struct {int mine_count; int push_count;} helper_array[NO_MOVE]=
         {
@@ -299,18 +300,29 @@ private:
             pivot = cell_far_neighbors[move.last_m][move.direction];
         }
         int adv_dir = oppositeDirection(move.ftol_dir);
+        if (move.mt == TWO_KILL_ONE || move.mt == THREE_KILL_ONE || move.mt == THREE_PUSH_ONE_KILL_ONE)
+        {
+            lost_marbles[marbleAt(pivot)]++;
+            I_dropped[marbleAt(move.frst_m)]++;
+        }
         for (int i=push_count+mine_count ;i > 0; --i)
         {
             moveSingleMarble(pivot,cell_neighbors[pivot][move.direction]);
             pivot = cell_neighbors [pivot][adv_dir];
         }
+
     }
 
 
-public:
     AbaloneBoard():cell_marble({std::pair<MarbleColor,int>(NO_MARBLE,-1)})
     {
         clearAllMarbles();
+    }
+    virtual ~AbaloneBoard(){}
+    virtual void setNumberOfPlayers(int nPlyr)
+    {
+        assert (nPlyr>=2 && nPlyr <=3);
+        _nPlyr = nPlyr;
     }
     virtual int rotatePosition(int position, int rotation) const
     {
@@ -320,16 +332,62 @@ public:
             position = rotated_cells[position];
         return position;
     }
+    virtual int verticalMirrorPosition(int position) const
+    {
 
+        return row_column_to_pos(rows-1-row_of_cell[position],pos_in_row_of_cell[position]);
+
+    }
+    virtual int horizontalMirrorPosition(int position) const
+    {
+        int row = row_of_cell[position];
+        return row_column_to_pos(row,cells_in_row[row] -1 - pos_in_row_of_cell[position]);
+
+    }
+
+    virtual int neighbor(int position, Direction d) const
+    {
+        assert (((int)d)>=0 && ((int)d)<6);
+        assert (position>=0 && position<cells);
+        return cell_neighbors[position][d];
+    }
+    virtual int farNeighbor(int position, Direction d) const
+    {
+        assert (((int)d)>=0 && ((int)d)<6);
+        assert (position>=0 && position<cells);
+        return cell_far_neighbors[position][d];
+    }
+    virtual int playerMarblePosition(int player, int marble_id) const
+    {
+        assert ( player >=0 && player < _nPlyr);
+        assert (((unsigned int)marble_id) < marbles_by_player[player].size());
+        return marbles_by_player[player][marble_id];
+    }
+    virtual int playerNumberOfMarbles(int player) const
+    {
+        assert ( player >=0 && player < _nPlyr);
+        return marbles_by_player[player].size();
+    }
+
+    virtual MarbleColor marbleAt(int position) const
+    {
+        assert (position>=0 && position<cells);
+        return cell_marble[position].first;
+    }
+    virtual int marbleIdAt(int position) const
+    {
+        assert (position>=0 && position<cells);
+        return cell_marble[position].second;
+    }
     void clearAllMarbles(){
         for (int i = 0; i< cells; ++i)
         {
             cell_marble[i]=std::pair<MarbleColor,int>(NO_MARBLE,-1);
         }
-        for (int i = 0; i< _NPlyr; ++i)
+        for (int i = 0; i< MAX_PLAYERS; ++i)
         {
             marbles_by_player[i].clear();
-            marbles_dropped[i] = 0;
+            lost_marbles[i] = 0;
         }
         current_turn = BLACK;
         last_move ={WHITE,0,0,NO_DIRECTION,NO_DIRECTION,NO_MOVE};
@@ -348,7 +406,7 @@ public:
             MoveCode result = testMove(move);
             if ((result == MOVE_OK))
             {
-                executeMove(move);
+                _executeMove(move);
                 nextTurn();
                 last_move = move;
             }
@@ -561,7 +619,7 @@ public:
     virtual void possibleMoves(MarbleColor color, std::vector<move_record_t> &result) const
     {
         assert(result.empty());
-        assert(color<_NPlyr);
+        assert(color<_nPlyr);
         std::vector<int>::const_iterator it = marbles_by_player[color].begin();
         std::vector<int>::const_iterator it_end = marbles_by_player[color].end();
         for (;it != it_end; ++it)
@@ -615,15 +673,20 @@ public:
     }
     virtual void nextTurn()
     {
-        current_turn = (MarbleColor) ((current_turn+1)%_NPlyr);
+        current_turn = (MarbleColor) ((current_turn+1)%_nPlyr);
     }
     virtual MarbleColor currentTurn() const
     {
         return current_turn;
     }
-    virtual int takenDown(MarbleColor color) const
+
+    virtual int lostMarbles(MarbleColor color) const
     {
-        return marbles_dropped[color];
+        return lost_marbles[color];
+    }
+    virtual int dropCount(MarbleColor color) const
+    {
+        return I_dropped[color];
     }
     void getClusters(MarbleColor color,std::vector<std::vector<int> > & clusters) const
     {
@@ -723,6 +786,16 @@ public:
             clusters.push_back((*map_iter).second);
 
         }
+    }
+    virtual float cellCoordX(int position) const
+    {
+        assert (position>=0 && position< cells);
+        return cartesian_coordinates[position][0];
+    }
+    virtual float cellCoordY(int position) const
+    {
+        assert (position>=0 && position< cells);
+        return cartesian_coordinates[position][1];
     }
     void center_of_mass(const std::vector<int> & positions, float &cx, float &cy, float &R, float &deviation) const
     {
@@ -924,8 +997,8 @@ private:
             const unsigned int kill_mask = (1<<TWO_KILL_ONE) |(1<<THREE_KILL_ONE)|(1<<THREE_PUSH_ONE_KILL_ONE);
             for(int i=0;i<moves.size();++i)
             {
-                AbaloneBoard<L,_NPlyr> x= *this;
-                x.executeMove(moves[i]);
+                AbaloneBoard<L> x= *this;
+                x._executeMove(moves[i]);
                 std::vector<move_record_t> next_moves;
                 x.possibleMoves(color,next_moves);
 
@@ -1181,7 +1254,7 @@ private:
 public:
     void ai_params(MarbleColor my_color, std::map<std::string,float>& ai_vec, std::vector<move_record_t > &moves, bool before, int revision) const
     {
-        assert(_NPlyr == 2);
+        assert(_nPlyr == 2);
         MarbleColor rival_color=(my_color==BLACK)?WHITE:BLACK;
         float my_cx,my_cy,my_R,my_deviation;
         center_of_mass(marbles_by_player[my_color], my_cx,my_cy,my_R,my_deviation);
@@ -1204,8 +1277,8 @@ public:
         ai_vec["distance-between-me-rival"]=distance_me_rival;
         if (revision == 0
                 || (revision>=1 && before))
-            ai_vec["my-lost-dears"]=marbles_dropped[my_color];
-        ai_vec["rival-lost-dears"]=marbles_dropped[rival_color];
+            ai_vec["my-lost-dears"]=lost_marbles[my_color];
+        ai_vec["rival-lost-dears"]=lost_marbles[rival_color];
         if (revision>=1)
         {
             if (before)
@@ -1235,14 +1308,17 @@ public:
 private:
 
     std::array<std::pair<MarbleColor,int>, cells> cell_marble;
-    std::vector<int> marbles_by_player[_NPlyr];
+    std::vector<int> marbles_by_player[MAX_PLAYERS];
     move_record_t last_move;
-
-    int marbles_dropped[_NPlyr];
+    int _nPlyr;
+    int lost_marbles[MAX_PLAYERS];
+    int I_dropped[MAX_PLAYERS];
     MarbleColor current_turn;
-    friend class MoveRecorder;
+
 
 
 };
 
+
+#endif //SECRET_ABALONE_BOARD_CLASS
 #endif // ABALONEBOARD_H

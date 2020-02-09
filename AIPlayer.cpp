@@ -4,8 +4,8 @@
 #include <AbaloneBoard.h>
 #include <MoveRecorder.h>
 #include <unistd.h>
-const char* NET_PATH[2]={ "/home/orr/abalone1.net","/home/orr/abalone2.net"};
-const char* TRAIN_PATH[2]={ "/home/orr/abalone1.data","/home/orr/abalone2.data"};
+const char* NET_PATH[2]={ "/home/orr/.abalone/abalone1.net","/home/orr/.abalone/abalone2.net"};
+const char* TRAIN_PATH[2]={ "/home/orr/.abalone/abalone1.data","/home/orr/.abalone/abalone2.data"};
 
 AIPlayer::AIPlayer(bool rank_player,int revision):_revision(revision)
 {
@@ -18,10 +18,10 @@ AIPlayer::AIPlayer(bool rank_player,int revision):_revision(revision)
         if (ann == 0)
         {
             printf("creating empty net\n");
-         ann = fann_create_standard(4, NET_INPUT_LAYER[revision] , 50,8, 1);
+         ann = fann_create_standard(5, NET_INPUT_LAYER[revision] , 60, 50,7, 1);
          fann_randomize_weights(ann,
-                 -5.8,
-                 5.8);
+                 -2.0,
+                 2.0);
         }
     }
 
@@ -51,22 +51,22 @@ fann_type getRank(std::map<std::string,float>& ai_current_input, std::map<std::s
     if (ai_next_input["rival-lost-dears"] > ai_current_input["rival-lost-dears"])
     {
 
-        train_result +=4.5;
+        train_result +=12.5;
 
 
 
     }
     if (ai_next_input["rival-lost-dears"] ==6)
-        train_result +=16;
+        train_result +=90;
     if (((1<<move.mt)&  push_mask) !=0 )
     {
-        train_result +=4.7;
+        train_result +=4;
     }
 
 
     train_result += 2.7*( 6/ai_next_input["my-deviation"] - 6/ai_current_input["my-deviation"]);
     //train_result += ( 2/ai_current_input["rival-deviation"] - 2/ai_next_input["rival-deviation"]);
-    train_result += -20*( ai_next_input["distance-between-me-rival"] - ai_current_input["distance-between-me-rival"]);
+    train_result += -18*( ai_next_input["distance-between-me-rival"] - ai_current_input["distance-between-me-rival"]);
     /*float factor = 6;
     if (ai_current_input["rival-distance-from-center"] < 0.9 && ai_current_input["rival-deviation"]>2.9 && (ai_current_input["rival-ring3-count"])<=1 && (ai_current_input["rival-ring2-count"])==0 &&(ai_current_input["rival-ring1-count"]) == 0 && ai_current_input["my-deviation"] <4.5)
     {
@@ -97,19 +97,19 @@ fann_type getRank(std::map<std::string,float>& ai_current_input, std::map<std::s
 
 
     }*/
-    train_result +=0.7*ai_next_input["my-total-neighbors"];
-    train_result +=0.6*ai_next_input["my-total-far-neighbors"];
+    train_result +=0.6*ai_next_input["my-total-neighbors"];
+    train_result +=0.5*ai_next_input["my-total-far-neighbors"];
     train_result +=0.3*ai_next_input["my-total-rhomb-neighbors"];
     train_result -=0.24*ai_next_input["rival-total-neighbors"];
     train_result -=0.1*ai_next_input["rival-total-far-neighbors"];
     train_result -=0.1*ai_next_input["rival-total-rhomb-neighbors"];
     train_result += 1.2/(ai_next_input["my-distance-from-center"]+1);
-    train_result += (ai_next_input["my-ring1-count"]);
-    train_result += 0.14*(ai_next_input["my-ring2-count"]);
-    train_result += 0.1*(ai_next_input["my-ring3-count"]);
-    train_result -= 0.02*(ai_next_input["my-ring4-count"]);
-    train_result -= 0.03*(ai_next_input["my-ring5-count"]);
-    train_result += 2*(ai_next_input["rival-deviation"]);
+    train_result += 2*(ai_next_input["my-ring1-count"]);
+    train_result += 0.5*(ai_next_input["my-ring2-count"]);
+    train_result += 0.3*(ai_next_input["my-ring3-count"]);
+    train_result -= 0.08*(ai_next_input["my-ring4-count"]);
+    train_result -= 0.12*(ai_next_input["my-ring5-count"]);
+    train_result += 3*(ai_next_input["rival-deviation"]);
     train_result -= 2*(ai_next_input["rival-next-max-kill"]);
     train_result -= 2*(ai_next_input["rival-three-kill1-count"]);
     train_result -= 2.3*(ai_next_input["rival-three-kill2-count"]);
@@ -208,7 +208,7 @@ fann_type getRank(std::map<std::string,float>& ai_current_input, std::map<std::s
 }
 IAbaloneBoard::move_record_t AIPlayer::getMove(const IAbaloneBoard &abalone_board)
 {
-    using standard_abalone  = AbaloneBoard<5,2>;
+    using standard_abalone  = AbaloneBoard<5>;
     IAbaloneBoard::MarbleColor my_color = abalone_board.currentTurn();
             //return {IAbaloneBoard::WHITE,0,0,IAbaloneBoard::NO_DIRECTION,IAbaloneBoard::NO_DIRECTION,IAbaloneBoard::NO_MOVE};
     std::vector<IAbaloneBoard::move_record_t> moves;
@@ -245,17 +245,19 @@ IAbaloneBoard::move_record_t AIPlayer::getMove(const IAbaloneBoard &abalone_boar
             net_input[net_next_inp_ind] = it->second;
             net_next_inp_ind++;
         }
-        net_input[net_next_inp_ind] = getRank( ai_current_input, ai_next_input,moves[i],0);
-        net_next_inp_ind++;
+        //net_input[net_next_inp_ind] = getRank( ai_current_input, ai_next_input,moves[i],0);
+        //net_next_inp_ind++;
 
         fann_type train_result = getRank( ai_current_input, ai_next_input,moves[i],2);
+        if( !ann && _revision==0)
+            train_result+=my_rand()*0.9;
         //fann_type result = train_result;
 /*        fann_train(	ann,
                 net_input,
                 &train_result	);*/
         fann_type result;
         if (ann) result = *fann_run(ann,
-                net_input.data()	)+my_rand()*0.9;
+                net_input.data()	)+my_rand()*3;
         else result = train_result;
 
         if (result>max_res)
@@ -294,7 +296,7 @@ void AIPlayer::control(const std::string &cmd, void* data)
     }
     else if (cmd == "collect")
     {
-        using standard_abalone  = AbaloneBoard<5,2>;
+        using standard_abalone  = AbaloneBoard<5>;
         standard_abalone abalone_board;
         ((const MoveRecorder*)data)->Place(&abalone_board);
         std::vector<IAbaloneBoard::move_record_t>& rec_vec= ((MoveRecorder*)data)->records();
@@ -334,20 +336,20 @@ void AIPlayer::control(const std::string &cmd, void* data)
                         net_input[net_next_inp_ind] = it->second;
                         net_next_inp_ind++;
                     }
-                    net_input[net_next_inp_ind] = getRank( ai_current_input, ai_next_input,moves[i],0);
-                    net_next_inp_ind++;
+                    //net_input[net_next_inp_ind] = getRank( ai_current_input, ai_next_input,moves[i],0);
+                    //net_next_inp_ind++;
 
 
-                    fann_type train_result = 0;//
+                    fann_type train_result = -0.6;//
                     if (moves[i].frst_m == rec_vec[m].frst_m && moves[i].last_m == rec_vec[m].last_m
                             && moves[i].direction == rec_vec[m].direction)
                     {
-                        train_result= 1;
+                        train_result= 0.6;
 
                     }
                     else
                     {
-                        train_result= getRank( ai_current_input, ai_next_input,moves[i],0.3)*0.5;
+                        //train_result= getRank( ai_current_input, ai_next_input,moves[i],0.3)*0.3;
                     }
                     training_data.push_back(std::pair<std::array<float,MAX_NET_INPUT>,float>((const std::array<float,MAX_NET_INPUT> &)net_input,train_result));
                     next_moves.clear();
@@ -359,7 +361,7 @@ void AIPlayer::control(const std::string &cmd, void* data)
 
 
         }
-        if( training_data.size()>30000)
+        if( training_data.size()>2000)
         {
             unlink(TRAIN_PATH[_revision]);
 
@@ -391,8 +393,8 @@ void AIPlayer::control(const std::string &cmd, void* data)
                 );
                 fann_set_learning_rate(ann,
                         0.3	);
-                fann_train_on_file(ann, TRAIN_PATH[_revision], 80000,
-                        5, 0.003);
+                fann_train_on_file(ann, TRAIN_PATH[_revision], 200,
+                        5, 0.3);
                 fann_save(	ann,
                     NET_PATH[_revision]	);
                 /*fann_randomize_weights(ann,
