@@ -3,6 +3,7 @@ CONFIG += console c++1z
 CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -lfann -lreadline
+DEFINES += ENABLE_AI ENABLE_XML
 
 SOURCES += main.cpp \
     BoardPrinterConsole.cpp \

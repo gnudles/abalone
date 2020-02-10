@@ -1,6 +1,6 @@
 #ifndef AIPLAYER_H
 #define AIPLAYER_H
-
+#ifdef ENABLE_AI
 #include <fann.h>
 #include "AbalonePlayer.h"
 const int NET_INPUT_LAYER[2]={160,230};
@@ -17,5 +17,5 @@ private:
     std::vector <std::pair<std::array<float,MAX_NET_INPUT>,float> > training_data;
     int _revision;
 };
-
+#endif //ENABLE_AI
 #endif // AIPLAYER_H

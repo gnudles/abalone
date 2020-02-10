@@ -77,6 +77,7 @@ int main()
         players[0]= new HumanConsolePlayer();
         players[1]= new HumanConsolePlayer();
     }
+#ifdef ENABLE_AI
     else if (option == 1)
     {
         players[0]= new HumanConsolePlayer();
@@ -102,6 +103,7 @@ int main()
         players[0]= new HumanConsolePlayer();
         players[1]= new AIPlayer(true,0);
     }
+#endif
     else if (option == 7)
     {
         players[0]= new HumanConsolePlayer();
@@ -118,13 +120,17 @@ int main()
     }
 
     DefaultPlacer placer;
+    #ifdef ENABLE_AI
     AIPlayer * trainee =0;
+#endif
     if(option == 7)
         placer.Place(abalone_board,3,11);
     else
     {
         placer.Place(abalone_board,2,14);
+#ifdef ENABLE_AI
          trainee = new AIPlayer(false,1);
+#endif
     }
     MoveRecorder recorder;
     //recorder.toSVG("/home/orr/.abalone/game1.svg");
@@ -170,11 +176,13 @@ int main()
                         //players[1]->control("shuffle",0);//shuffle
                         //players[1]->control("train",(void*)&recorder);
                         //players[1]->control("save",0);//winner
+                        #ifdef ENABLE_AI
                         if (option==5)
                         {
                         trainee->control("collect",(void*)&recorder);//
                         trainee->control("save",0);//winner
                         }
+#endif
                         abalone_board->clearAllMarbles();
                         placer.Place(abalone_board,2,14);
                         recorder.clear();
@@ -188,8 +196,10 @@ int main()
                         num_turns =0;
                         printf("game ended!\n");
                         recorder.toSVG("/home/orr/.abalone/game.svg");
+                        #ifdef ENABLE_AI
                         trainee->control("collect",(void*)&recorder);//
                         trainee->control("save",0);//winner
+#endif
                         players[0]->control("load",0);//ai
 
 
@@ -217,8 +227,10 @@ int main()
     delete players[1];
     if (players[2]!=0)
         delete players[2];
+#ifdef ENABLE_AI
     if (trainee)
         delete trainee;
+#endif
     delete abalone_board;
     return 0;
 }

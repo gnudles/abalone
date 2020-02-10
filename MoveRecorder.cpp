@@ -1,15 +1,19 @@
 #include "MoveRecorder.h"
 #include "IAbaloneBoard.h"
 #include "BoardFactory.h"
+#ifdef ENABLE_XML
 #include <libxml++/libxml++.h>
+#endif
 #define SVG_SCALE(X) ((X)*190)
 #define SVG_SCALE_MOVE(X) (SVG_SCALE(X)+1000)
 MoveRecorder::MoveRecorder()
 {
 
 }
+
 void MoveRecorder::toSVG(const std::string & file)
 {
+#ifdef ENABLE_XML
     xmlpp::Document d;
     xmlpp::Element *svg_node;
     IAbaloneBoard * abalone_board = abaloneBoardFactory(board_size);
@@ -667,4 +671,5 @@ void MoveRecorder::toSVG(const std::string & file)
 
     d.write_to_file(file);
     delete abalone_board;
+#endif //ENABLE_XML
 }

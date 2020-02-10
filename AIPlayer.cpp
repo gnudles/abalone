@@ -1,3 +1,6 @@
+
+#ifdef ENABLE_AI
+
 #include "AIPlayer.h"
 #include <map>
 #include <string>
@@ -404,3 +407,4 @@ void AIPlayer::control(const std::string &cmd, void* data)
         }
     }
 }
+#endif
