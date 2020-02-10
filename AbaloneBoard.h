@@ -118,7 +118,14 @@ private:
         }
     static constexpr cells_array_t row_of_cell{initializeRowOfCell()};
     static constexpr cells_array_t pos_in_row_of_cell{initializeCellPosInRow()};
-
+    static constexpr inline int32_t const_abs(int32_t x) noexcept
+    {
+        if (x==0x80000000)
+        {
+            return 0x7fffffff;
+        }
+        return (x<0)?-x:x;
+    }
     static constexpr cells_coord_array_t initializeCartCoords() //center piece is (0,0)
     {
         cells_coord_array_t coords=cells_coord_array_t();
@@ -126,7 +133,7 @@ private:
         {
             int r = row_of_cell[i];
             int clmn = pos_in_row_of_cell[i];
-            float x=-(edge_length-1) + clmn + std::abs(r-(edge_length-1))*0.5;
+            float x=-(edge_length-1) + clmn + const_abs(r-(edge_length-1))*0.5;
             float y=(r-(edge_length-1))*TRIANGLE_HEIGHT;
             coords[i][0]=x;
             coords[i][1]=y;
