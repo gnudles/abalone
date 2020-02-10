@@ -4,8 +4,8 @@
 #include "AIPlayer.h"
 #include <map>
 #include <string>
-#include <AbaloneBoard.h>
-#include <MoveRecorder.h>
+#include "AbaloneBoard.h"
+#include "MoveRecorder.h"
 #include <unistd.h>
 const char* NET_PATH[2]={ "/home/orr/.abalone/abalone1.net","/home/orr/.abalone/abalone2.net"};
 const char* TRAIN_PATH[2]={ "/home/orr/.abalone/abalone1.data","/home/orr/.abalone/abalone2.data"};

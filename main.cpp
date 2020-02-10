@@ -4,8 +4,8 @@
 #include "BoardFactory.h"
 #include "terminal_colors.h"
 #include "DefaultPlacer.h"
-#include <HumanConsolePlayer.h>
-#include <AIPlayer.h>
+#include "HumanConsolePlayer.h"
+#include "AIPlayer.h"
 #include <readline/readline.h>
 #include <iostream>
 #include <unistd.h>

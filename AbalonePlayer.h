@@ -1,6 +1,6 @@
 #ifndef ABALONEPLAYER_H
 #define ABALONEPLAYER_H
-#include <IAbaloneBoard.h>
+#include "IAbaloneBoard.h"
 class AbalonePlayer
 {
 public:
