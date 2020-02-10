@@ -126,7 +126,7 @@ private:
         {
             int r = row_of_cell[i];
             int clmn = pos_in_row_of_cell[i];
-            float x=-(edge_length-1) + clmn + fabsf(r-(edge_length-1))*0.5;
+            float x=-(edge_length-1) + clmn + std::abs(r-(edge_length-1))*0.5;
             float y=(r-(edge_length-1))*TRIANGLE_HEIGHT;
             coords[i][0]=x;
             coords[i][1]=y;
@@ -404,7 +404,7 @@ public:
     virtual MoveCode makeMove(move_record_t& move)
     {
             MoveCode result = testMove(move);
-            if ((result == MOVE_OK))
+            if (result == MOVE_OK)
             {
                 _executeMove(move);
                 nextTurn();
