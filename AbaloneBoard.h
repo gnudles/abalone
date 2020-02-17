@@ -49,8 +49,6 @@ private:
      *    4 /   \ 3
      */
 
-
-
     static constexpr cells_array_t initializeRowOfCell()
         {
             cells_array_t conv_map = cells_array_t();
@@ -188,14 +186,11 @@ private:
             }
         }
         return neigh;
-
     }
 
     static constexpr cells_neigh_array_t cell_neighbors{initializeCellNeighbors()};
     static constexpr cells_neigh_array_t initializeCellFarNeighbors()
     {
-
-
         cells_neigh_array_t far_neigh = cells_neigh_array_t();
         for (int i=0; i < cells ; i++)
         {
@@ -351,7 +346,26 @@ public:
         return row_column_to_pos(row,cells_in_row[row] -1 - pos_in_row_of_cell[position]);
 
     }
-
+	virtual int corner(Direction d) const
+	{
+		switch(d)
+		{
+			case UP_LEFT:
+				return 0;
+			case UP_RIGHT:
+				return edge_length -1;
+			case RIGHT:
+				return cells/2+edge_length -1;
+			case DOWN_RIGHT:
+				return cells-1;
+			case DOWN_LEFT:
+				return cells-edge_length;
+			case LEFT:
+				return cells/2-edge_length +1;
+		}
+		assert(false);
+		return -1;
+	}
     virtual int neighbor(int position, Direction d) const
     {
         assert (((int)d)>=0 && ((int)d)<6);
@@ -583,12 +597,6 @@ public:
                                 {
                                     return INVALID_MOVE;
                                 }
-#ifdef MULTIPLAYER_REQUIRE_PUSH_WITH_SAME_COLOR
-                                if (cell_marble[after_dest].first != opponent_color) // try to push one but afterward there is other one's marble.
-                                {
-                                    return INVALID_MOVE;
-                                }
-#endif
                                 int after_after_dest = cell_neighbors[after_dest][move.direction];
                                 bool push_two_to_water = (after_after_dest == -1);
 

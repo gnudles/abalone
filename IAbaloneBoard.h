@@ -40,6 +40,7 @@ public:
     virtual void addMarble(int position, MarbleColor marble) = 0;
     virtual int rotatePosition(int position, int rotation) const = 0;
     virtual int verticalMirrorPosition(int position) const = 0;
+    virtual int corner(Direction d) const = 0;
     virtual int horizontalMirrorPosition(int position) const = 0;
     virtual float cellCoordX(int position) const = 0;
     virtual float cellCoordY(int position) const = 0;
