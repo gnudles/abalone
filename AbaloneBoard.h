@@ -3,6 +3,8 @@
 #define SECRET_ABALONE_BOARD_CLASS
 #ifdef  SECRET_ABALONE_BOARD_CLASS
 #include <array>
+#include <algorithm>
+#include <numeric>
 #include <assert.h>
 #include <map>
 #include <math.h>
@@ -17,6 +19,8 @@ inline void swap_value(T& a, T& b)
     b^=a;
     a^=b;
 }
+
+
 template <int L>
 class AbaloneBoard : public IAbaloneBoard
 {
@@ -1033,16 +1037,80 @@ private:
         }
     }
 
-    void ai_clusters_count(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out) const
+    std::vector<size_t> sort_clusters_by_size(const std::vector<std::vector<int>> &v) const {
+
+      // initialize original index locations
+      std::vector<size_t> idx(v.size());
+      std::iota(idx.begin(), idx.end(), 0);
+
+      // sort indexes based on comparing values in v
+      // using std::stable_sort instead of std::sort
+      // to avoid unnecessary index re-orderings
+      // when v contains elements of equal values
+      std::stable_sort(idx.begin(), idx.end(),
+           [&v](size_t i1, size_t i2) {return v[i1].size() < v[i2].size();});
+
+      return idx;
+    }
+
+    void ai_params_clusters(MarbleColor my_color,MarbleColor rival_color, std::map<std::string,float>& out) const
     {
         std::vector<std::vector<int>> my_clusters;
         std::vector<std::vector<int>> rival_clusters;
         getClusters(my_color,my_clusters);
+        std::vector<size_t> my_sorted_indices = sort_clusters_by_size(my_clusters);
+
         getClusters(rival_color,rival_clusters);
+        std::vector<size_t> rival_sorted_indices = sort_clusters_by_size(rival_clusters);
 
         out["my-number-of-clusters"] = (float)my_clusters.size()/4.0;
+        out["my-largest-cluster"] = my_clusters[my_sorted_indices.back()].size() / 8.0;
+        out["my-smallest-cluster"] = my_clusters[my_sorted_indices.front()].size() / 8.0;
 
         out["rival-number-of-clusters"] = (float)rival_clusters.size()/4.0;
+        out["rival-largest-cluster"] = rival_clusters[rival_sorted_indices.back()].size() / 8.0;
+        out["rival-smallest-cluster"] = rival_clusters[rival_sorted_indices.front()].size() / 8.0;
+
+        int i=0;
+        int j=0;
+        std::vector<std::pair<float,float>> my_com;
+        std::vector<std::pair<float,float>> rival_com;
+        for (int i = my_sorted_indices.size() - 1 ; i >= 0 ; --i)
+        {
+            if (my_clusters[my_sorted_indices.back()].size() != my_clusters[my_sorted_indices[i]].size())
+            {
+                break;
+
+            }
+            float my_cx,my_cy,my_R,my_deviation;
+            center_of_mass(my_clusters[my_sorted_indices[i]], my_cx,my_cy,my_R,my_deviation);
+            my_com.push_back(std::pair<float,float>(my_cx,my_cy));
+
+        }
+        for (int j = rival_sorted_indices.size() - 1 ; j >= 0 ; --j)
+        {
+            if (rival_clusters[rival_sorted_indices.back()].size() != rival_clusters[rival_sorted_indices[j]].size())
+            {
+                break;
+            }
+            float rival_cx,rival_cy,rival_R,rival_deviation;
+            center_of_mass(rival_clusters[rival_sorted_indices[j]], rival_cx,rival_cy,rival_R,rival_deviation);
+            rival_com.push_back(std::pair<float,float>(rival_cx,rival_cy));
+        }
+        float min_dist=edge_length*edge_length*2;//large enough value
+        for(i = 0 ; i< my_com.size(); i++)
+        {
+            for(j = 0 ; j< rival_com.size(); j++)
+            {
+                float d_x = my_com[i].first- rival_com[j].first;
+                float d_y = my_com[i].second- rival_com[j].second;
+                float dist = d_x*d_x+d_y*d_y;
+                if (dist<min_dist)
+                    min_dist = dist;
+            }
+        }
+        out["largest-to-largest-minimal-distance"] = std::sqrt(min_dist);
+
 
 /*
 
@@ -1304,7 +1372,7 @@ public:
 
         if (revision>0)
         {
-            ai_clusters_count(my_color,rival_color,ai_vec);
+            ai_params_clusters(my_color,rival_color,ai_vec);
             const unsigned int kill_mask = (1<<IAbaloneBoard::TWO_KILL_ONE) |(1<<IAbaloneBoard::THREE_KILL_ONE)|(1<<IAbaloneBoard::THREE_PUSH_ONE_KILL_ONE);
             const unsigned int push_mask = (1<<IAbaloneBoard::TWO_PUSH_ONE) |(1<<IAbaloneBoard::THREE_PUSH_ONE)|(1<<IAbaloneBoard::THREE_PUSH_TWO);
             ai_vec["last-move-kill"]=(((1<<last_move.mt)&  kill_mask) !=0 )?1:0;

@@ -136,7 +136,7 @@ int main()
     //recorder.toSVG("/home/orr/.abalone/game1.svg");
     //exit(0);
     recorder.recordInitialPosition(*abalone_board);
-    recorder.toSVG("/home/orr/.abalone/game.svg");
+    recorder.toSVG("/home/orr/.abalone/abalone_openning.svg");
 
     printer.Print(*abalone_board);
     int num_turns = 0;
@@ -147,20 +147,21 @@ int main()
                 IAbaloneBoard::move_record_t move = players[abalone_board->currentTurn()]->getMove(*abalone_board);
                 if (abalone_board->makeMove(move)==IAbaloneBoard::MOVE_OK)
                 {
-
-                    /*std::map<std::string,float> ai_vector;
-                    std::vector<IAbaloneBoard::move_record_t > moves;
-                    abalone_board->ai_params(abalone_board->currentTurn(),ai_vector,moves,true,1);
-                    std::map<std::string,float>::const_iterator it =ai_vector.begin();
-                    for (;it !=ai_vector.end();++it)
+                    if (abalone_board->numberOfPlayers() == 2)
                     {
-                        std::cout<< it->first << ":" << it->second << std::endl;
+                        std::map<std::string,float> ai_vector;
+                        std::vector<IAbaloneBoard::move_record_t > moves;
+                        abalone_board->ai_params(abalone_board->currentTurn(),ai_vector,moves,true,1);
+                        std::map<std::string,float>::const_iterator it =ai_vector.begin();
+                        for (;it !=ai_vector.end();++it)
+                        {
+                            std::cout<< it->first << ":" << it->second << std::endl;
+                        }
+                        std::cout<< "total input vector length:" << ai_vector.size() << std::endl;
                     }
-                    std::cout<< "total input vector length:" << ai_vector.size() << std::endl;
-*/
                     recorder.addMove(move);
                     num_turns++;
-                    if (num_turns>120)
+                    if (num_turns>12000)
                     {
                         printf("too much turns!\n");
                         printf("**********************************************\n");

@@ -18,4 +18,5 @@ IAbaloneBoard* abaloneBoardFactory(int size)
     {
         return new AbaloneBoard<8>();
     }
+    return 0;
 }

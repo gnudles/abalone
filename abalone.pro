@@ -3,7 +3,7 @@ CONFIG += console c++1z
 CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -lfann -lreadline
-DEFINES += ENABLE_AI ENABLE_XML
+DEFINES += ENABLE_AI
 
 SOURCES += main.cpp \
     BoardPrinterConsole.cpp \
@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     DefaultPlacer.cpp \
     OffBoardPlacer.cpp \
     BelgianDaisyPlacer.cpp \
-    BoardFactory.cpp
+    BoardFactory.cpp \
+    tinyxml2.cpp
 
 HEADERS += \
     AbaloneBoard.h \
@@ -28,12 +29,13 @@ HEADERS += \
     DefaultPlacer.h \
     OffBoardPlacer.h \
     BelgianDaisyPlacer.h \
-    BoardFactory.h
+    BoardFactory.h \
+    tinyxml2.h
 
 DISTFILES += \
     original_makeMove.txt
 
-unix {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += libxml++-2.6
-}
+#unix {
+#    CONFIG += link_pkgconfig
+#    PKGCONFIG += libxml++-2.6
+#}

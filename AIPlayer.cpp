@@ -69,7 +69,9 @@ fann_type getRank(std::map<std::string,float>& ai_current_input, std::map<std::s
 
     train_result += 2.7*( 6/ai_next_input["my-deviation"] - 6/ai_current_input["my-deviation"]);
     //train_result += ( 2/ai_current_input["rival-deviation"] - 2/ai_next_input["rival-deviation"]);
-    train_result += -18*( ai_next_input["distance-between-me-rival"] - ai_current_input["distance-between-me-rival"]);
+    train_result += -13*( ai_next_input["distance-between-me-rival"] - ai_current_input["distance-between-me-rival"]);
+    train_result += -6*( ai_next_input["largest-to-largest-minimal-distance"] - 0.8*ai_current_input["largest-to-largest-minimal-distance"]);
+
     /*float factor = 6;
     if (ai_current_input["rival-distance-from-center"] < 0.9 && ai_current_input["rival-deviation"]>2.9 && (ai_current_input["rival-ring3-count"])<=1 && (ai_current_input["rival-ring2-count"])==0 &&(ai_current_input["rival-ring1-count"]) == 0 && ai_current_input["my-deviation"] <4.5)
     {

@@ -1,9 +1,8 @@
 #include "MoveRecorder.h"
 #include "IAbaloneBoard.h"
 #include "BoardFactory.h"
-#ifdef ENABLE_XML
-#include <libxml++/libxml++.h>
-#endif
+#include "tinyxml2.h"
+using namespace tinyxml2;
 #define SVG_SCALE(X) ((X)*190)
 #define SVG_SCALE_MOVE(X) (SVG_SCALE(X)+1000)
 MoveRecorder::MoveRecorder()
@@ -11,233 +10,236 @@ MoveRecorder::MoveRecorder()
 
 }
 
+
 void MoveRecorder::toSVG(const std::string & file)
 {
-#ifdef ENABLE_XML
-    xmlpp::Document d;
-    xmlpp::Element *svg_node;
+
+    XMLDocument d;
+
+
     IAbaloneBoard * abalone_board = abaloneBoardFactory(board_size);
     //using standard_abalone  = AbaloneBoard<5>;
 
-
-    svg_node = d.create_root_node("svg","http://www.w3.org/2000/svg");
-    svg_node->set_attribute("width","2020");
-    svg_node->set_attribute("height","2020");
+    XMLElement *svg_node = d.InsertChildElement("svg");
+    svg_node->SetName("svg","http://www.w3.org/2000/svg");
+    svg_node->SetAttribute("xmlns","http://www.w3.org/2000/svg");
+    svg_node->SetAttribute("width","2020");
+    svg_node->SetAttribute("height","2120");
     {
-        xmlpp::Element * svg_defs = svg_node->add_child("defs");
+        XMLElement * svg_defs = svg_node->InsertChildElement("defs");
         {
-            xmlpp::Element * scg = svg_defs->add_child("linearGradient");
-            scg->set_attribute("id","scg");
-            scg->set_attribute("x1","1");
-            scg->set_attribute("x2","0");
-            scg->set_attribute("y1","1");
-            scg->set_attribute("y2","0");
+            XMLElement * scg = svg_defs->InsertChildElement("linearGradient");
+            scg->SetAttribute("id","scg");
+            scg->SetAttribute("x1","1");
+            scg->SetAttribute("x2","0");
+            scg->SetAttribute("y1","1");
+            scg->SetAttribute("y2","0");
             {
-                xmlpp::Element * stop = scg->add_child("stop");
-                stop->set_attribute("offset","0%");
-                stop->set_attribute("stop-color","rgba(30,30,30,0.4)");
+                XMLElement * stop = scg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0%");
+                stop->SetAttribute("stop-color","rgba(30,30,30,0.4)");
             }
             {
-                xmlpp::Element * stop = scg->add_child("stop");
-                stop->set_attribute("offset","100%");
-                stop->set_attribute("stop-color","rgba(90,90,90,0.2)");
+                XMLElement * stop = scg->InsertChildElement("stop");
+                stop->SetAttribute("offset","100%");
+                stop->SetAttribute("stop-color","rgba(90,90,90,0.2)");
             }
-            xmlpp::Element * wg = svg_defs->add_child("radialGradient");
-            wg->set_attribute("id","white_grad");
-            wg->set_attribute("cx","0.35");
-            wg->set_attribute("cy","0.37");
+            XMLElement * wg = svg_defs->InsertChildElement("radialGradient");
+            wg->SetAttribute("id","white_grad");
+            wg->SetAttribute("cx","0.35");
+            wg->SetAttribute("cy","0.37");
 
             {
-                xmlpp::Element * stop = wg->add_child("stop");
-                stop->set_attribute("offset","0");
-                stop->set_attribute("stop-color","#ffffff");
+                XMLElement * stop = wg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0");
+                stop->SetAttribute("stop-color","#ffffff");
             }
             {
-                xmlpp::Element * stop = wg->add_child("stop");
-                stop->set_attribute("offset","0.3");
-                stop->set_attribute("stop-color","#f2f2f2");
+                XMLElement * stop = wg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.3");
+                stop->SetAttribute("stop-color","#f2f2f2");
             }
             {
-                xmlpp::Element * stop = wg->add_child("stop");
-                stop->set_attribute("offset","0.366");
-                stop->set_attribute("stop-color","#e9e9e9");
+                XMLElement * stop = wg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.366");
+                stop->SetAttribute("stop-color","#e9e9e9");
             }
             {
-                xmlpp::Element * stop = wg->add_child("stop");
-                stop->set_attribute("offset","0.64");
-                stop->set_attribute("stop-color","#aaaaaa");
+                XMLElement * stop = wg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.64");
+                stop->SetAttribute("stop-color","#aaaaaa");
             }
             {
-                xmlpp::Element * stop = wg->add_child("stop");
-                stop->set_attribute("offset","1");
-                stop->set_attribute("stop-color","#4e4e4e");
+                XMLElement * stop = wg->InsertChildElement("stop");
+                stop->SetAttribute("offset","1");
+                stop->SetAttribute("stop-color","#4e4e4e");
             }
-            xmlpp::Element * bg = svg_defs->add_child("radialGradient");
-            bg->set_attribute("id","black_grad");
-            bg->set_attribute("cx","0.35");
-            bg->set_attribute("cy","0.37");
+            XMLElement * bg = svg_defs->InsertChildElement("radialGradient");
+            bg->SetAttribute("id","black_grad");
+            bg->SetAttribute("cx","0.35");
+            bg->SetAttribute("cy","0.37");
 
             {
-                xmlpp::Element * stop = bg->add_child("stop");
-                stop->set_attribute("offset","0");
-                stop->set_attribute("stop-color","#333333");
+                XMLElement * stop = bg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0");
+                stop->SetAttribute("stop-color","#333333");
             }
             {
-                xmlpp::Element * stop = bg->add_child("stop");
-                stop->set_attribute("offset","0.3");
-                stop->set_attribute("stop-color","#222222");
+                XMLElement * stop = bg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.3");
+                stop->SetAttribute("stop-color","#222222");
             }
             {
-                xmlpp::Element * stop = bg->add_child("stop");
-                stop->set_attribute("offset","0.366");
-                stop->set_attribute("stop-color","#111111");
+                XMLElement * stop = bg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.366");
+                stop->SetAttribute("stop-color","#111111");
             }
             {
-                xmlpp::Element * stop = bg->add_child("stop");
-                stop->set_attribute("offset","0.64");
-                stop->set_attribute("stop-color","#080808");
+                XMLElement * stop = bg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.64");
+                stop->SetAttribute("stop-color","#080808");
             }
             {
-                xmlpp::Element * stop = bg->add_child("stop");
-                stop->set_attribute("offset","1");
-                stop->set_attribute("stop-color","#000000");
+                XMLElement * stop = bg->InsertChildElement("stop");
+                stop->SetAttribute("offset","1");
+                stop->SetAttribute("stop-color","#000000");
             }
-            xmlpp::Element * rg = svg_defs->add_child("radialGradient");
-            rg->set_attribute("id","red_grad");
-            rg->set_attribute("cx","0.35");
-            rg->set_attribute("cy","0.37");
+            XMLElement * rg = svg_defs->InsertChildElement("radialGradient");
+            rg->SetAttribute("id","red_grad");
+            rg->SetAttribute("cx","0.35");
+            rg->SetAttribute("cy","0.37");
 
             {
-                xmlpp::Element * stop = rg->add_child("stop");
-                stop->set_attribute("offset","0");
-                stop->set_attribute("stop-color","#ffaaaa");
+                XMLElement * stop = rg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0");
+                stop->SetAttribute("stop-color","#ffaaaa");
             }
             {
-                xmlpp::Element * stop = rg->add_child("stop");
-                stop->set_attribute("offset","0.3");
-                stop->set_attribute("stop-color","#992222");
+                XMLElement * stop = rg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.3");
+                stop->SetAttribute("stop-color","#992222");
             }
             {
-                xmlpp::Element * stop = rg->add_child("stop");
-                stop->set_attribute("offset","0.366");
-                stop->set_attribute("stop-color","#881111");
+                XMLElement * stop = rg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.366");
+                stop->SetAttribute("stop-color","#881111");
             }
             {
-                xmlpp::Element * stop = rg->add_child("stop");
-                stop->set_attribute("offset","0.64");
-                stop->set_attribute("stop-color","#770808");
+                XMLElement * stop = rg->InsertChildElement("stop");
+                stop->SetAttribute("offset","0.64");
+                stop->SetAttribute("stop-color","#770808");
             }
             {
-                xmlpp::Element * stop = rg->add_child("stop");
-                stop->set_attribute("offset","1");
-                stop->set_attribute("stop-color","#220a0a");
+                XMLElement * stop = rg->InsertChildElement("stop");
+                stop->SetAttribute("offset","1");
+                stop->SetAttribute("stop-color","#220a0a");
             }
             {
-                xmlpp::Element * filter = svg_defs->add_child("filter");
-                filter->set_attribute("id","fe_bump");
+                XMLElement * filter = svg_defs->InsertChildElement("filter");
+                filter->SetAttribute("id","fe_bump");
                 {
-                    xmlpp::Element * flood = filter->add_child("feFlood");
-                    flood->set_attribute("flood-color","#111");
-                    flood->set_attribute("result","COLOR-outline");
+                    XMLElement * flood = filter->InsertChildElement("feFlood");
+                    flood->SetAttribute("flood-color","#111");
+                    flood->SetAttribute("result","COLOR-outline");
 
                 }
                 {
-                    xmlpp::Element * morph = filter->add_child("feMorphology");
-                    morph->set_attribute("operator","dilate");
-                    morph->set_attribute("radius","2");
-                    morph->set_attribute("in","SourceAlpha");
-                    morph->set_attribute("result","OUTLINE_10");
+                    XMLElement * morph = filter->InsertChildElement("feMorphology");
+                    morph->SetAttribute("operator","dilate");
+                    morph->SetAttribute("radius","2");
+                    morph->SetAttribute("in","SourceAlpha");
+                    morph->SetAttribute("result","OUTLINE_10");
 
                 }
                 {
-                    xmlpp::Element * composite = filter->add_child("feComposite");
-                    composite->set_attribute("operator","in");
-                    composite->set_attribute("in","COLOR-outline");
-                    composite->set_attribute("in2","OUTLINE_10");
-                    composite->set_attribute("result","OUTLINE_20");
+                    XMLElement * composite = filter->InsertChildElement("feComposite");
+                    composite->SetAttribute("operator","in");
+                    composite->SetAttribute("in","COLOR-outline");
+                    composite->SetAttribute("in2","OUTLINE_10");
+                    composite->SetAttribute("result","OUTLINE_20");
 
                 }
                 {
-                    xmlpp::Element * fe = filter->add_child("feGaussianBlur");
-                    fe->set_attribute("stdDeviation","9");
-                    fe->set_attribute("in","SourceAlpha");
-                    fe->set_attribute("result","LIGHTING-EFFECTS_10");
+                    XMLElement * fe = filter->InsertChildElement("feGaussianBlur");
+                    fe->SetAttribute("stdDeviation","9");
+                    fe->SetAttribute("in","SourceAlpha");
+                    fe->SetAttribute("result","LIGHTING-EFFECTS_10");
                 }
                 {
-                    xmlpp::Element * fe = filter->add_child("feSpecularLighting");
-                    fe->set_attribute("surfaceScale","6");
-                    fe->set_attribute("specularConstant","0.5");
-                    fe->set_attribute("specularExponent","1");
-                    fe->set_attribute("lighting-color","#777");
-                    fe->set_attribute("in","LIGHTING-EFFECTS_10");
-                    fe->set_attribute("result","LIGHTING-EFFECTS_20");
+                    XMLElement * fe = filter->InsertChildElement("feSpecularLighting");
+                    fe->SetAttribute("surfaceScale","6");
+                    fe->SetAttribute("specularConstant","0.5");
+                    fe->SetAttribute("specularExponent","1");
+                    fe->SetAttribute("lighting-color","#777");
+                    fe->SetAttribute("in","LIGHTING-EFFECTS_10");
+                    fe->SetAttribute("result","LIGHTING-EFFECTS_20");
                     {
-                        xmlpp::Element * pl = fe->add_child("fePointLight");
-                        pl->set_attribute("x","200");
-                        pl->set_attribute("y","300");
-                        pl->set_attribute("z","700");
+                        XMLElement * pl = fe->InsertChildElement("fePointLight");
+                        pl->SetAttribute("x","200");
+                        pl->SetAttribute("y","300");
+                        pl->SetAttribute("z","700");
 
                     }
                 }
                 {
-                    xmlpp::Element * composite = filter->add_child("feComposite");
-                    composite->set_attribute("operator","in");
-                    composite->set_attribute("in","LIGHTING-EFFECTS_20");
-                    composite->set_attribute("in2","SourceAlpha");
-                    composite->set_attribute("result","LIGHTING-EFFECTS_30");
+                    XMLElement * composite = filter->InsertChildElement("feComposite");
+                    composite->SetAttribute("operator","in");
+                    composite->SetAttribute("in","LIGHTING-EFFECTS_20");
+                    composite->SetAttribute("in2","SourceAlpha");
+                    composite->SetAttribute("result","LIGHTING-EFFECTS_30");
 
                 }
                 {
-                    xmlpp::Element * composite = filter->add_child("feComposite");
-                    composite->set_attribute("operator","arithmetic");
-                    composite->set_attribute("k1","0");
-                    composite->set_attribute("k2","1");
-                    composite->set_attribute("k3","1");
-                    composite->set_attribute("k4","0");
-                    composite->set_attribute("in","SourceGraphic");
-                    composite->set_attribute("in2","LIGHTING-EFFECTS_30");
-                    composite->set_attribute("result","LIGHTING-EFFECTS_40");
+                    XMLElement * composite = filter->InsertChildElement("feComposite");
+                    composite->SetAttribute("operator","arithmetic");
+                    composite->SetAttribute("k1","0");
+                    composite->SetAttribute("k2","1");
+                    composite->SetAttribute("k3","1");
+                    composite->SetAttribute("k4","0");
+                    composite->SetAttribute("in","SourceGraphic");
+                    composite->SetAttribute("in2","LIGHTING-EFFECTS_30");
+                    composite->SetAttribute("result","LIGHTING-EFFECTS_40");
 
                 }
                 {
-                    xmlpp::Element * fe = filter->add_child("feComponentTransfer");
+                    XMLElement * fe = filter->InsertChildElement("feComponentTransfer");
 
-                    fe->set_attribute("in","LIGHTING-EFFECTS_40");
-                    fe->set_attribute("result","COLOR-EFFECTS_10");
+                    fe->SetAttribute("in","LIGHTING-EFFECTS_40");
+                    fe->SetAttribute("result","COLOR-EFFECTS_10");
                     {
-                        xmlpp::Element * ff = fe->add_child("feFuncR");
-                        ff->set_attribute("type","gamma");
-                        ff->set_attribute("offset","0.07");
-                        ff->set_attribute("amplitude","12");
-                        ff->set_attribute("exponent","4.8");
-
-                    }
-                    {
-                        xmlpp::Element * ff = fe->add_child("feFuncG");
-                        ff->set_attribute("type","gamma");
-                        ff->set_attribute("offset","0.07");
-                        ff->set_attribute("amplitude","12");
-                        ff->set_attribute("exponent","4.8");
+                        XMLElement * ff = fe->InsertChildElement("feFuncR");
+                        ff->SetAttribute("type","gamma");
+                        ff->SetAttribute("offset","0.07");
+                        ff->SetAttribute("amplitude","12");
+                        ff->SetAttribute("exponent","4.8");
 
                     }
                     {
-                        xmlpp::Element * ff = fe->add_child("feFuncB");
-                        ff->set_attribute("type","gamma");
-                        ff->set_attribute("offset","0.07");
-                        ff->set_attribute("amplitude","12");
-                        ff->set_attribute("exponent","4.8");
+                        XMLElement * ff = fe->InsertChildElement("feFuncG");
+                        ff->SetAttribute("type","gamma");
+                        ff->SetAttribute("offset","0.07");
+                        ff->SetAttribute("amplitude","12");
+                        ff->SetAttribute("exponent","4.8");
+
+                    }
+                    {
+                        XMLElement * ff = fe->InsertChildElement("feFuncB");
+                        ff->SetAttribute("type","gamma");
+                        ff->SetAttribute("offset","0.07");
+                        ff->SetAttribute("amplitude","12");
+                        ff->SetAttribute("exponent","4.8");
 
                     }
                 }
                 {
-                    xmlpp::Element * fe = filter->add_child("feMerge");
+                    XMLElement * fe = filter->InsertChildElement("feMerge");
                     {
-                        xmlpp::Element * mn = fe->add_child("feMergeNode");
-                        mn->set_attribute("in","OUTLINE_20");
+                        XMLElement * mn = fe->InsertChildElement("feMergeNode");
+                        mn->SetAttribute("in","OUTLINE_20");
                     }
                     {
-                        xmlpp::Element * mn = fe->add_child("feMergeNode");
-                        mn->set_attribute("in","COLOR-EFFECTS_10");
+                        XMLElement * mn = fe->InsertChildElement("feMergeNode");
+                        mn->SetAttribute("in","COLOR-EFFECTS_10");
                     }
                 }
 
@@ -272,9 +274,9 @@ void MoveRecorder::toSVG(const std::string & file)
           </filter>
                  */
             }
-            /*xmlpp::Element * rwg = svg_defs->add_child("radialGradient");
-            rwg->set_attribute("xlink:href","#white_grad");
-            wg->set_attribute("id","w_rad_grad");*/
+            /*XMLElement * rwg = svg_defs->InsertChildElement("radialGradient");
+            rwg->SetAttribute("xlink:href","#white_grad");
+            wg->SetAttribute("id","w_rad_grad");*/
 
             /*
 <linearGradient
@@ -325,29 +327,29 @@ void MoveRecorder::toSVG(const std::string & file)
 
 
         }
-        xmlpp::Element * svg_style = svg_node->add_child("style");
+        XMLElement * svg_style = svg_node->InsertChildElement("style");
         {
-            svg_style->set_child_text(".letters { font: bold 40px sans-serif; }");
+            svg_style->SetText(".letters { font: bold 40px sans-serif; }");
         }
 
         {
-            xmlpp::Element * background = svg_node->add_child("rect");
-            background->set_attribute("x","0");
-            background->set_attribute("y","0");
-            background->set_attribute("width","100%");
-            background->set_attribute("height","100%");
-            background->set_attribute("fill","rgba(100,110,160,0.7)");
+            XMLElement * background = svg_node->InsertChildElement("rect");
+            background->SetAttribute("x","0");
+            background->SetAttribute("y","0");
+            background->SetAttribute("width","100%");
+            background->SetAttribute("height","100%");
+            background->SetAttribute("fill","rgba(100,110,160,0.7)");
         }
 
-        xmlpp::Element * board = svg_node->add_child("g");
-        board->set_attribute("transform","scale(0.4) translate(10,200) ");
+        XMLElement * board = svg_node->InsertChildElement("g");
+        board->SetAttribute("transform","scale(1.0) translate(10,200) ");
         {
-            xmlpp::Element * masking = board->add_child("defs")->add_child("mask");
-            masking->set_attribute("id","brd_mask");
+            XMLElement * masking = board->InsertChildElement("defs")->InsertChildElement("mask");
+            masking->SetAttribute("id","brd_mask");
             {
-                xmlpp::Element * hexagon = masking->add_child("polygon");
-                hexagon->set_attribute("points","0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866");
-                hexagon->set_attribute("fill","white");
+                XMLElement * hexagon = masking->InsertChildElement("polygon");
+                hexagon->SetAttribute("points","0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866");
+                hexagon->SetAttribute("fill","white");
                 for (int i = 0; i< abalone_board->numberOfCells() ; ++i)
                 {
                     float x=abalone_board->cellCoordX(i);
@@ -355,23 +357,23 @@ void MoveRecorder::toSVG(const std::string & file)
                     x=SVG_SCALE_MOVE(x);
                     y=SVG_SCALE_MOVE(y);
 
-                    xmlpp::Element * board_circle = masking->add_child("circle");
-                    board_circle->set_attribute("cx",std::to_string((int)x));
-                    board_circle->set_attribute("cy",std::to_string((int)y));
-                    board_circle->set_attribute("r","65");
-                    board_circle->set_attribute("fill","black");
+                    XMLElement * board_circle = masking->InsertChildElement("circle");
+                    board_circle->SetAttribute("cx",std::to_string((int)x).c_str());
+                    board_circle->SetAttribute("cy",std::to_string((int)y).c_str());
+                    board_circle->SetAttribute("r","65");
+                    board_circle->SetAttribute("fill","black");
 
                 }
             }
 
             {
-                xmlpp::Element * hexagon_g = board->add_child("g");
-                xmlpp::Element * hexagon = hexagon_g->add_child("polygon");
-                hexagon->set_attribute("points","0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866");
-                hexagon->set_attribute("fill","rgb(80,80,80)");
-                hexagon->set_attribute("stroke","black");
-                hexagon->set_attribute("mask","url(#brd_mask)");
-                hexagon_g->set_attribute("filter","url(#fe_bump)");
+                XMLElement * hexagon_g = board->InsertChildElement("g");
+                XMLElement * hexagon = hexagon_g->InsertChildElement("polygon");
+                hexagon->SetAttribute("points","0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866");
+                hexagon->SetAttribute("fill","rgb(80,80,80)");
+                hexagon->SetAttribute("stroke","black");
+                hexagon->SetAttribute("mask","url(#brd_mask)");
+                hexagon_g->SetAttribute("filter","url(#fe_bump)");
 
             }
             {
@@ -386,33 +388,35 @@ void MoveRecorder::toSVG(const std::string & file)
                     {
                         float x=SVG_SCALE_MOVE(start_x+j*1.0);
                         {
-                        xmlpp::Element * circle = board->add_child("circle");
-                        circle->set_attribute("cx",std::to_string((int)x));
-                        circle->set_attribute("cy",std::to_string((int)y));
-                        circle->set_attribute("r","40");
-                        circle->set_attribute("fill","url(#scg)");
-        //                circle->set_attribute("fill","black");
+                        XMLElement * circle = board->InsertChildElement("circle");
+                        circle->SetAttribute("cx",std::to_string((int)x).c_str());
+                        circle->SetAttribute("cy",std::to_string((int)y).c_str());
+                        circle->SetAttribute("r","40");
+                        circle->SetAttribute("fill","url(#scg)");
+        //                circle->SetAttribute("fill","black");
 
 
-                        xmlpp::Element * triangle = board->add_child("polygon");
-                        triangle->set_attribute("points","-0.5,0.28867 0,-0.57735 0.5,0.28867");
-                        triangle->set_attribute("fill","rgb(90,90,90)");
-                        triangle->set_attribute("transform"," translate("+std::to_string((int)x) +"," +std::to_string((int)y) +")  scale(66) ");
+                        XMLElement * triangle = board->InsertChildElement("polygon");
+                        triangle->SetAttribute("points","-0.5,0.28867 0,-0.57735 0.5,0.28867");
+                        triangle->SetAttribute("fill","rgb(90,90,90)");
+                        std::string transformation = "translate("+std::to_string((int)x) +"," +std::to_string((int)y) +")  scale(66)";
+                        triangle->SetAttribute("transform",transformation.c_str());
                         }
                         y=2000-y;
                         {
-                            xmlpp::Element * circle = board->add_child("circle");
-                            circle->set_attribute("cx",std::to_string((int)x));
-                            circle->set_attribute("cy",std::to_string((int)y));
-                            circle->set_attribute("r","40");
-                            circle->set_attribute("fill","url(#scg)");
-            //                circle->set_attribute("fill","black");
+                            XMLElement * circle = board->InsertChildElement("circle");
+                            circle->SetAttribute("cx",std::to_string((int)x).c_str());
+                            circle->SetAttribute("cy",std::to_string((int)y).c_str());
+                            circle->SetAttribute("r","40");
+                            circle->SetAttribute("fill","url(#scg)");
+            //                circle->SetAttribute("fill","black");
 
 
-                            xmlpp::Element * triangle = board->add_child("polygon");
-                            triangle->set_attribute("points","-0.5,-0.28867 0.5,-0.28867 0,0.57735");
-                            triangle->set_attribute("fill","rgb(90,90,90)");
-                            triangle->set_attribute("transform"," translate("+std::to_string((int)x) +"," +std::to_string((int)y) +")  scale(66) ");
+                            XMLElement * triangle = board->InsertChildElement("polygon");
+                            triangle->SetAttribute("points","-0.5,-0.28867 0.5,-0.28867 0,0.57735");
+                            triangle->SetAttribute("fill","rgb(90,90,90)");
+                            std::string transformation = "translate("+std::to_string((int)x) +"," +std::to_string((int)y) +")  scale(66)";
+                            triangle->SetAttribute("transform",transformation.c_str());
                         }
                         y=2000-y;
                     }
@@ -431,19 +435,21 @@ void MoveRecorder::toSVG(const std::string & file)
 
 
             }
+            float text_y_offset = 15;
+            float text_x_offset = -8;
             {//alpha
                 float start_y=(board_size-1)*TRIANGLE_HEIGHT;
                 float start_x=-(board_size-1)*0.5 -1;
                 for (int i =0; i< abalone_board->numberOfRows();++i)
                 {
-                    xmlpp::Element * letter = board->add_child("text");
-                    letter->set_attribute("class","letters");
-                    letter->set_attribute("fill","red");
-                    letter->set_attribute("x",std::to_string(SVG_SCALE_MOVE(start_x)));
-                    letter->set_attribute("y",std::to_string(SVG_SCALE_MOVE(start_y)));
-                    Glib::ustring l;
+                    XMLElement * letter = board->InsertChildElement("text");
+                    letter->SetAttribute("class","letters");
+                    letter->SetAttribute("fill","#fac");
+                    letter->SetAttribute("x",std::to_string(SVG_SCALE_MOVE(start_x)+text_x_offset).c_str());
+                    letter->SetAttribute("y",std::to_string(SVG_SCALE_MOVE(start_y)+text_y_offset).c_str());
+                    std::string l;
                     l+=(char)('A'+i);
-                    letter->set_child_text(l);
+                    letter->SetText(l.c_str());
                     if (i>= abalone_board->hexagonEdgeLength()-1)
                     {
                         start_x+=0.5;
@@ -461,12 +467,12 @@ void MoveRecorder::toSVG(const std::string & file)
                 float start_x=-(board_size-1)*0.5 +0.5;
                 for (int i =0; i< abalone_board->numberOfRows();++i)
                 {
-                    xmlpp::Element * letter = board->add_child("text");
-                    letter->set_attribute("class","letters");
-                    letter->set_attribute("fill","blue");
-                    letter->set_attribute("x",std::to_string(SVG_SCALE_MOVE(start_x)));
-                    letter->set_attribute("y",std::to_string(SVG_SCALE_MOVE(start_y)));
-                    letter->set_child_text(std::to_string(i+1));
+                    XMLElement * letter = board->InsertChildElement("text");
+                    letter->SetAttribute("class","letters");
+                    letter->SetAttribute("fill","#afc");
+                    letter->SetAttribute("x",std::to_string(SVG_SCALE_MOVE(start_x)+text_x_offset).c_str());
+                    letter->SetAttribute("y",std::to_string(SVG_SCALE_MOVE(start_y)+text_y_offset).c_str());
+                    letter->SetText(std::to_string(i+1).c_str());
                     if (i>= abalone_board->hexagonEdgeLength()-1)
                     {
                         start_x+=0.5;
@@ -489,7 +495,7 @@ void MoveRecorder::toSVG(const std::string & file)
             {{-0.5,-TRIANGLE_HEIGHT},{0.5,-TRIANGLE_HEIGHT},{1.0,0.0},{0.5,TRIANGLE_HEIGHT},{-0.5,TRIANGLE_HEIGHT},{-1.0,0.0}};
             Place(abalone_board);
             const char* svg_color[MAX_PLAYERS] = {"url(#black_grad)","url(#white_grad)","url(#red_grad)"};
-            std::vector<xmlpp::Element*> marble_xml[MAX_PLAYERS];
+            std::vector<XMLElement*> marble_xml[MAX_PLAYERS];
             for (int c=0; c<num_players; ++c)
             {
                 for (int i =0 ; i<abalone_board->playerNumberOfMarbles(c);++i)
@@ -497,37 +503,37 @@ void MoveRecorder::toSVG(const std::string & file)
                     int pos = abalone_board->playerMarblePosition(c,i);
                     if (pos>=0)
                     {
-                        xmlpp::Element * circle = board->add_child("circle");
+                        XMLElement * circle = board->InsertChildElement("circle");
                         float x,y;
                         x= SVG_SCALE_MOVE(abalone_board->cellCoordX(pos));
                         y= SVG_SCALE_MOVE(abalone_board->cellCoordY(pos));
-                        circle->set_attribute("cx",std::to_string((int)x));
-                        circle->set_attribute("cy",std::to_string((int)y));
-                        circle->set_attribute("r","76");
-                        circle->set_attribute("fill",svg_color[c]);
-                        circle->set_attribute("stroke","black");
-                        circle->set_attribute("stroke-width","7");
+                        circle->SetAttribute("cx",std::to_string((int)x).c_str());
+                        circle->SetAttribute("cy",std::to_string((int)y).c_str());
+                        circle->SetAttribute("r","76");
+                        circle->SetAttribute("fill",svg_color[c]);
+                        circle->SetAttribute("stroke","black");
+                        circle->SetAttribute("stroke-width","7");
                         marble_xml[c].push_back(circle);
                     }
                 }
             }
-            std::vector<xmlpp::Element*> killed_marble_xml[MAX_PLAYERS];
+            std::vector<XMLElement*> killed_marble_xml[MAX_PLAYERS];
             {
                 float x=80,y=-40;
             for (int c=0; c<num_players; ++c)
             {
                 for (int i =0 ; i<6;++i)
                 {
-                        xmlpp::Element * circle = board->add_child("circle");
+                        XMLElement * circle = board->InsertChildElement("circle");
 
 
-                        circle->set_attribute("cx",std::to_string((int)x));
-                        circle->set_attribute("cy",std::to_string((int)y));
-                        circle->set_attribute("r","20");
-                        circle->set_attribute("fill",svg_color[c]);
-                        circle->set_attribute("opacity","0.2");
-                        circle->set_attribute("stroke","black");
-                        circle->set_attribute("stroke-width","6");
+                        circle->SetAttribute("cx",std::to_string((int)x).c_str());
+                        circle->SetAttribute("cy",std::to_string((int)y).c_str());
+                        circle->SetAttribute("r","20");
+                        circle->SetAttribute("fill",svg_color[c]);
+                        circle->SetAttribute("opacity","0.2");
+                        circle->SetAttribute("stroke","black");
+                        circle->SetAttribute("stroke-width","6");
                         killed_marble_xml[c].push_back(circle);
                         x+=140;
 
@@ -571,87 +577,105 @@ void MoveRecorder::toSVG(const std::string & file)
                     for (int i=push_count+mine_count ;i > 0; --i)
                     {
                         //moveSingleMarble(pivot,neighbor(pivot,move.direction));
-                        xmlpp::Element * circle = marble_xml[abalone_board->marbleAt(pivot)]
+                        XMLElement * circle = marble_xml[abalone_board->marbleAt(pivot)]
                                 [abalone_board->marbleIdAt(pivot)];
                         float from_x, from_y,to_x,to_y;
                         from_x = SVG_SCALE_MOVE(abalone_board->cellCoordX(pivot));
                         from_y = SVG_SCALE_MOVE(abalone_board->cellCoordY(pivot));
                         to_x = from_x+SVG_SCALE(add_by_direction[move.direction][0]);
                         to_y = from_y+SVG_SCALE(add_by_direction[move.direction][1]);
-                        {
-                            xmlpp::Element *anim=circle->add_child("animate");
+                        { // x axis animation
+                            XMLElement *anim=circle->InsertChildElement("animate");
 
-                            anim->set_attribute("fill","freeze");
-                            anim->set_attribute("attributeName","cx");
-                            anim->set_attribute("from",std::to_string((int)from_x));
-                            anim->set_attribute("to",std::to_string((int)to_x));
-                            anim->set_attribute("dur","0.8s");
+                            anim->SetAttribute("fill","freeze");
+                            anim->SetAttribute("attributeName","cx");
+                            anim->SetAttribute("from",std::to_string((int)from_x).c_str());
+                            anim->SetAttribute("to",std::to_string((int)to_x).c_str());
+                            anim->SetAttribute("dur","0.8s");
                             if (anim_count>0)
-                                anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                            {
+                                std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                anim->SetAttribute("begin",anim_node.c_str());
+                            }
                         }
-                        {
-                            xmlpp::Element *anim=circle->add_child("animate");
-                            anim->set_attribute("fill","freeze");
-                            anim->set_attribute("attributeName","cy");
-                            anim->set_attribute("from",std::to_string((int)from_y));
-                            anim->set_attribute("to",std::to_string((int)to_y));
-                            anim->set_attribute("dur","0.8s");
+                        { // y axis animation
+                            XMLElement *anim=circle->InsertChildElement("animate");
+                            anim->SetAttribute("fill","freeze");
+                            anim->SetAttribute("attributeName","cy");
+                            anim->SetAttribute("from",std::to_string((int)from_y).c_str());
+                            anim->SetAttribute("to",std::to_string((int)to_y).c_str());
+                            anim->SetAttribute("dur","0.8s");
                             if (anim_count>0)
-                                anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                            {
+                                std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                anim->SetAttribute("begin",anim_node.c_str());
+                            }
                             if (i == 1)
                             {
-
-                                anim->set_attribute("id","m"+std::to_string(anim_count));
+                                std::string anim_node = "m"+std::to_string(anim_count);
+                                anim->SetAttribute("id",anim_node.c_str());
                                 anim_count++;
                             }
                         }
                         if (abalone_board->neighbor(pivot,move.direction)<0)//kill scene
                         {
                             {
-                                xmlpp::Element *anim=circle->add_child("animate");
-                                anim->set_attribute("fill","freeze");
-                                anim->set_attribute("attributeName","opacity");
-                                anim->set_attribute("from","1.0");
-                                anim->set_attribute("to","0");
-                                anim->set_attribute("dur","1s");
+                                XMLElement *anim=circle->InsertChildElement("animate");
+                                anim->SetAttribute("fill","freeze");
+                                anim->SetAttribute("attributeName","opacity");
+                                anim->SetAttribute("from","1.0");
+                                anim->SetAttribute("to","0");
+                                anim->SetAttribute("dur","1s");
                                 if (anim_count>0)
-                                    anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                                {
+                                    std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                    anim->SetAttribute("begin",anim_node.c_str());
+                                }
                             }
                             {
-                                xmlpp::Element *anim=circle->add_child("animate");
-                                anim->set_attribute("fill","freeze");
-                                anim->set_attribute("attributeName","r");
-                                anim->set_attribute("from","80");
-                                anim->set_attribute("to","30");
-                                anim->set_attribute("dur","1s");
+                                XMLElement *anim=circle->InsertChildElement("animate");
+                                anim->SetAttribute("fill","freeze");
+                                anim->SetAttribute("attributeName","r");
+                                anim->SetAttribute("from","80");
+                                anim->SetAttribute("to","30");
+                                anim->SetAttribute("dur","1s");
                                 if (anim_count>0)
-                                    anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                                {
+                                    std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                    anim->SetAttribute("begin",anim_node.c_str());
+                                }
 
 
 
                             }
                             {
                                 IAbaloneBoard::MarbleColor foe =(IAbaloneBoard::MarbleColor)(abalone_board->currentTurn()^1);
-                                xmlpp::Element *circle=killed_marble_xml[foe][abalone_board->lostMarbles(foe)];
+                                XMLElement *circle=killed_marble_xml[foe][abalone_board->lostMarbles(foe)];
                                 {
-                                    xmlpp::Element *anim=circle->add_child("animate");
-                                    anim->set_attribute("fill","freeze");
-                                    anim->set_attribute("attributeName","opacity");
-                                    anim->set_attribute("from","0.2");
-                                    anim->set_attribute("to","1.0");
-                                    anim->set_attribute("dur","1s");
+                                    XMLElement *anim=circle->InsertChildElement("animate");
+                                    anim->SetAttribute("fill","freeze");
+                                    anim->SetAttribute("attributeName","opacity");
+                                    anim->SetAttribute("from","0.2");
+                                    anim->SetAttribute("to","1.0");
+                                    anim->SetAttribute("dur","1s");
                                     if (anim_count>0)
-                                        anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                                    {
+                                        std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                        anim->SetAttribute("begin",anim_node.c_str());
+                                    }
                                 }
                                 {
-                                    xmlpp::Element *anim=circle->add_child("animate");
-                                    anim->set_attribute("fill","freeze");
-                                    anim->set_attribute("attributeName","r");
-                                    anim->set_attribute("from","20");
-                                    anim->set_attribute("to","60");
-                                    anim->set_attribute("dur","1s");
+                                    XMLElement *anim=circle->InsertChildElement("animate");
+                                    anim->SetAttribute("fill","freeze");
+                                    anim->SetAttribute("attributeName","r");
+                                    anim->SetAttribute("from","20");
+                                    anim->SetAttribute("to","60");
+                                    anim->SetAttribute("dur","1s");
                                     if (anim_count>0)
-                                        anim->set_attribute("begin","m"+std::to_string(anim_count-1)+".end");
+                                    {
+                                        std::string anim_node = "m"+std::to_string(anim_count - 1)+".end";
+                                        anim->SetAttribute("begin",anim_node.c_str());
+                                    }
                                 }
 
                             }
@@ -669,7 +693,7 @@ void MoveRecorder::toSVG(const std::string & file)
 
 
 
-    d.write_to_file(file);
+    d.SaveFile(file.c_str());
     delete abalone_board;
-#endif //ENABLE_XML
+
 }

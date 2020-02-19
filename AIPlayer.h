@@ -3,7 +3,7 @@
 #ifdef ENABLE_AI
 #include <fann.h>
 #include "AbalonePlayer.h"
-const int NET_INPUT_LAYER[2]={160,230};
+const int NET_INPUT_LAYER[2]={160,250};
 #define MAX_NET_INPUT 256
 class AIPlayer : public AbalonePlayer
 {
