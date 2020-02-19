@@ -1,0 +1,480 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2020" height="2120">
+    <defs>
+        <linearGradient id="scg" x1="1" x2="0" y1="1" y2="0">
+            <stop offset="0%" stop-color="rgba(30,30,30,0.4)"/>
+            <stop offset="100%" stop-color="rgba(90,90,90,0.2)"/>
+        </linearGradient>
+        <radialGradient id="white_grad" cx="0.35" cy="0.37">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.3" stop-color="#f2f2f2"/>
+            <stop offset="0.366" stop-color="#e9e9e9"/>
+            <stop offset="0.64" stop-color="#aaaaaa"/>
+            <stop offset="1" stop-color="#4e4e4e"/>
+        </radialGradient>
+        <radialGradient id="black_grad" cx="0.35" cy="0.37">
+            <stop offset="0" stop-color="#333333"/>
+            <stop offset="0.3" stop-color="#222222"/>
+            <stop offset="0.366" stop-color="#111111"/>
+            <stop offset="0.64" stop-color="#080808"/>
+            <stop offset="1" stop-color="#000000"/>
+        </radialGradient>
+        <radialGradient id="red_grad" cx="0.35" cy="0.37">
+            <stop offset="0" stop-color="#ffaaaa"/>
+            <stop offset="0.3" stop-color="#992222"/>
+            <stop offset="0.366" stop-color="#881111"/>
+            <stop offset="0.64" stop-color="#770808"/>
+            <stop offset="1" stop-color="#220a0a"/>
+        </radialGradient>
+        <filter id="fe_bump">
+            <feFlood flood-color="#111" result="COLOR-outline"/>
+            <feMorphology operator="dilate" radius="2" in="SourceAlpha" result="OUTLINE_10"/>
+            <feComposite operator="in" in="COLOR-outline" in2="OUTLINE_10" result="OUTLINE_20"/>
+            <feGaussianBlur stdDeviation="9" in="SourceAlpha" result="LIGHTING-EFFECTS_10"/>
+            <feSpecularLighting surfaceScale="6" specularConstant="0.5" specularExponent="1" lighting-color="#777" in="LIGHTING-EFFECTS_10" result="LIGHTING-EFFECTS_20">
+                <fePointLight x="200" y="300" z="700"/>
+            </feSpecularLighting>
+            <feComposite operator="in" in="LIGHTING-EFFECTS_20" in2="SourceAlpha" result="LIGHTING-EFFECTS_30"/>
+            <feComposite operator="arithmetic" k1="0" k2="1" k3="1" k4="0" in="SourceGraphic" in2="LIGHTING-EFFECTS_30" result="LIGHTING-EFFECTS_40"/>
+            <feComponentTransfer in="LIGHTING-EFFECTS_40" result="COLOR-EFFECTS_10">
+                <feFuncR type="gamma" offset="0.07" amplitude="12" exponent="4.8"/>
+                <feFuncG type="gamma" offset="0.07" amplitude="12" exponent="4.8"/>
+                <feFuncB type="gamma" offset="0.07" amplitude="12" exponent="4.8"/>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="OUTLINE_20"/>
+                <feMergeNode in="COLOR-EFFECTS_10"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <style>.letters { font: bold 40px sans-serif; }</style>
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(100,110,160,0.7)"/>
+    <g transform="scale(1.0) translate(10,200) ">
+        <defs>
+            <mask id="brd_mask">
+                <polygon points="0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866" fill="white"/>
+                <circle cx="620" cy="341" r="65" fill="black"/>
+                <circle cx="810" cy="341" r="65" fill="black"/>
+                <circle cx="1000" cy="341" r="65" fill="black"/>
+                <circle cx="1190" cy="341" r="65" fill="black"/>
+                <circle cx="1380" cy="341" r="65" fill="black"/>
+                <circle cx="525" cy="506" r="65" fill="black"/>
+                <circle cx="715" cy="506" r="65" fill="black"/>
+                <circle cx="905" cy="506" r="65" fill="black"/>
+                <circle cx="1095" cy="506" r="65" fill="black"/>
+                <circle cx="1285" cy="506" r="65" fill="black"/>
+                <circle cx="1475" cy="506" r="65" fill="black"/>
+                <circle cx="430" cy="670" r="65" fill="black"/>
+                <circle cx="620" cy="670" r="65" fill="black"/>
+                <circle cx="810" cy="670" r="65" fill="black"/>
+                <circle cx="1000" cy="670" r="65" fill="black"/>
+                <circle cx="1190" cy="670" r="65" fill="black"/>
+                <circle cx="1380" cy="670" r="65" fill="black"/>
+                <circle cx="1570" cy="670" r="65" fill="black"/>
+                <circle cx="335" cy="835" r="65" fill="black"/>
+                <circle cx="525" cy="835" r="65" fill="black"/>
+                <circle cx="715" cy="835" r="65" fill="black"/>
+                <circle cx="905" cy="835" r="65" fill="black"/>
+                <circle cx="1095" cy="835" r="65" fill="black"/>
+                <circle cx="1285" cy="835" r="65" fill="black"/>
+                <circle cx="1475" cy="835" r="65" fill="black"/>
+                <circle cx="1665" cy="835" r="65" fill="black"/>
+                <circle cx="240" cy="1000" r="65" fill="black"/>
+                <circle cx="430" cy="1000" r="65" fill="black"/>
+                <circle cx="620" cy="1000" r="65" fill="black"/>
+                <circle cx="810" cy="1000" r="65" fill="black"/>
+                <circle cx="1000" cy="1000" r="65" fill="black"/>
+                <circle cx="1190" cy="1000" r="65" fill="black"/>
+                <circle cx="1380" cy="1000" r="65" fill="black"/>
+                <circle cx="1570" cy="1000" r="65" fill="black"/>
+                <circle cx="1760" cy="1000" r="65" fill="black"/>
+                <circle cx="335" cy="1164" r="65" fill="black"/>
+                <circle cx="525" cy="1164" r="65" fill="black"/>
+                <circle cx="715" cy="1164" r="65" fill="black"/>
+                <circle cx="905" cy="1164" r="65" fill="black"/>
+                <circle cx="1095" cy="1164" r="65" fill="black"/>
+                <circle cx="1285" cy="1164" r="65" fill="black"/>
+                <circle cx="1475" cy="1164" r="65" fill="black"/>
+                <circle cx="1665" cy="1164" r="65" fill="black"/>
+                <circle cx="430" cy="1329" r="65" fill="black"/>
+                <circle cx="620" cy="1329" r="65" fill="black"/>
+                <circle cx="810" cy="1329" r="65" fill="black"/>
+                <circle cx="1000" cy="1329" r="65" fill="black"/>
+                <circle cx="1190" cy="1329" r="65" fill="black"/>
+                <circle cx="1380" cy="1329" r="65" fill="black"/>
+                <circle cx="1570" cy="1329" r="65" fill="black"/>
+                <circle cx="525" cy="1493" r="65" fill="black"/>
+                <circle cx="715" cy="1493" r="65" fill="black"/>
+                <circle cx="905" cy="1493" r="65" fill="black"/>
+                <circle cx="1095" cy="1493" r="65" fill="black"/>
+                <circle cx="1285" cy="1493" r="65" fill="black"/>
+                <circle cx="1475" cy="1493" r="65" fill="black"/>
+                <circle cx="620" cy="1658" r="65" fill="black"/>
+                <circle cx="810" cy="1658" r="65" fill="black"/>
+                <circle cx="1000" cy="1658" r="65" fill="black"/>
+                <circle cx="1190" cy="1658" r="65" fill="black"/>
+                <circle cx="1380" cy="1658" r="65" fill="black"/>
+            </mask>
+        </defs>
+        <g filter="url(#fe_bump)">
+            <polygon points="0,1000 500,134 1500,134 2000,1000 1500,1866 500,1866" fill="rgb(80,80,80)" stroke="black" mask="url(#brd_mask)"/>
+        </g>
+        <circle cx="620" cy="1767" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(620,1767)  scale(66)"/>
+        <circle cx="620" cy="232" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(620,232)  scale(66)"/>
+        <circle cx="810" cy="1767" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(810,1767)  scale(66)"/>
+        <circle cx="810" cy="232" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(810,232)  scale(66)"/>
+        <circle cx="1000" cy="1767" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1000,1767)  scale(66)"/>
+        <circle cx="1000" cy="232" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1000,232)  scale(66)"/>
+        <circle cx="1190" cy="1767" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1190,1767)  scale(66)"/>
+        <circle cx="1190" cy="232" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1190,232)  scale(66)"/>
+        <circle cx="1380" cy="1767" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1380,1767)  scale(66)"/>
+        <circle cx="1380" cy="232" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1380,232)  scale(66)"/>
+        <circle cx="525" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(525,1603)  scale(66)"/>
+        <circle cx="525" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(525,396)  scale(66)"/>
+        <circle cx="715" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(715,1603)  scale(66)"/>
+        <circle cx="715" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(715,396)  scale(66)"/>
+        <circle cx="905" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(905,1603)  scale(66)"/>
+        <circle cx="905" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(905,396)  scale(66)"/>
+        <circle cx="1095" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1095,1603)  scale(66)"/>
+        <circle cx="1095" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1095,396)  scale(66)"/>
+        <circle cx="1285" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1285,1603)  scale(66)"/>
+        <circle cx="1285" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1285,396)  scale(66)"/>
+        <circle cx="1475" cy="1603" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1475,1603)  scale(66)"/>
+        <circle cx="1475" cy="396" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1475,396)  scale(66)"/>
+        <circle cx="430" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(430,1438)  scale(66)"/>
+        <circle cx="430" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(430,561)  scale(66)"/>
+        <circle cx="620" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(620,1438)  scale(66)"/>
+        <circle cx="620" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(620,561)  scale(66)"/>
+        <circle cx="810" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(810,1438)  scale(66)"/>
+        <circle cx="810" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(810,561)  scale(66)"/>
+        <circle cx="1000" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1000,1438)  scale(66)"/>
+        <circle cx="1000" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1000,561)  scale(66)"/>
+        <circle cx="1190" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1190,1438)  scale(66)"/>
+        <circle cx="1190" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1190,561)  scale(66)"/>
+        <circle cx="1380" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1380,1438)  scale(66)"/>
+        <circle cx="1380" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1380,561)  scale(66)"/>
+        <circle cx="1570" cy="1438" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1570,1438)  scale(66)"/>
+        <circle cx="1570" cy="561" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1570,561)  scale(66)"/>
+        <circle cx="335" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(335,1274)  scale(66)"/>
+        <circle cx="335" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(335,725)  scale(66)"/>
+        <circle cx="525" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(525,1274)  scale(66)"/>
+        <circle cx="525" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(525,725)  scale(66)"/>
+        <circle cx="715" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(715,1274)  scale(66)"/>
+        <circle cx="715" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(715,725)  scale(66)"/>
+        <circle cx="905" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(905,1274)  scale(66)"/>
+        <circle cx="905" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(905,725)  scale(66)"/>
+        <circle cx="1095" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1095,1274)  scale(66)"/>
+        <circle cx="1095" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1095,725)  scale(66)"/>
+        <circle cx="1285" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1285,1274)  scale(66)"/>
+        <circle cx="1285" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1285,725)  scale(66)"/>
+        <circle cx="1475" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1475,1274)  scale(66)"/>
+        <circle cx="1475" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1475,725)  scale(66)"/>
+        <circle cx="1665" cy="1274" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1665,1274)  scale(66)"/>
+        <circle cx="1665" cy="725" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1665,725)  scale(66)"/>
+        <circle cx="240" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(240,1109)  scale(66)"/>
+        <circle cx="240" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(240,890)  scale(66)"/>
+        <circle cx="430" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(430,1109)  scale(66)"/>
+        <circle cx="430" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(430,890)  scale(66)"/>
+        <circle cx="620" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(620,1109)  scale(66)"/>
+        <circle cx="620" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(620,890)  scale(66)"/>
+        <circle cx="810" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(810,1109)  scale(66)"/>
+        <circle cx="810" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(810,890)  scale(66)"/>
+        <circle cx="1000" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1000,1109)  scale(66)"/>
+        <circle cx="1000" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1000,890)  scale(66)"/>
+        <circle cx="1190" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1190,1109)  scale(66)"/>
+        <circle cx="1190" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1190,890)  scale(66)"/>
+        <circle cx="1380" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1380,1109)  scale(66)"/>
+        <circle cx="1380" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1380,890)  scale(66)"/>
+        <circle cx="1570" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1570,1109)  scale(66)"/>
+        <circle cx="1570" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1570,890)  scale(66)"/>
+        <circle cx="1760" cy="1109" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1760,1109)  scale(66)"/>
+        <circle cx="1760" cy="890" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1760,890)  scale(66)"/>
+        <circle cx="145" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(145,945)  scale(66)"/>
+        <circle cx="145" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(145,1054)  scale(66)"/>
+        <circle cx="335" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(335,945)  scale(66)"/>
+        <circle cx="335" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(335,1054)  scale(66)"/>
+        <circle cx="525" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(525,945)  scale(66)"/>
+        <circle cx="525" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(525,1054)  scale(66)"/>
+        <circle cx="715" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(715,945)  scale(66)"/>
+        <circle cx="715" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(715,1054)  scale(66)"/>
+        <circle cx="905" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(905,945)  scale(66)"/>
+        <circle cx="905" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(905,1054)  scale(66)"/>
+        <circle cx="1095" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1095,945)  scale(66)"/>
+        <circle cx="1095" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1095,1054)  scale(66)"/>
+        <circle cx="1285" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1285,945)  scale(66)"/>
+        <circle cx="1285" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1285,1054)  scale(66)"/>
+        <circle cx="1475" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1475,945)  scale(66)"/>
+        <circle cx="1475" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1475,1054)  scale(66)"/>
+        <circle cx="1665" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1665,945)  scale(66)"/>
+        <circle cx="1665" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1665,1054)  scale(66)"/>
+        <circle cx="1855" cy="945" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1855,945)  scale(66)"/>
+        <circle cx="1855" cy="1054" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1855,1054)  scale(66)"/>
+        <circle cx="240" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(240,780)  scale(66)"/>
+        <circle cx="240" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(240,1219)  scale(66)"/>
+        <circle cx="430" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(430,780)  scale(66)"/>
+        <circle cx="430" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(430,1219)  scale(66)"/>
+        <circle cx="620" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(620,780)  scale(66)"/>
+        <circle cx="620" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(620,1219)  scale(66)"/>
+        <circle cx="810" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(810,780)  scale(66)"/>
+        <circle cx="810" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(810,1219)  scale(66)"/>
+        <circle cx="1000" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1000,780)  scale(66)"/>
+        <circle cx="1000" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1000,1219)  scale(66)"/>
+        <circle cx="1190" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1190,780)  scale(66)"/>
+        <circle cx="1190" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1190,1219)  scale(66)"/>
+        <circle cx="1380" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1380,780)  scale(66)"/>
+        <circle cx="1380" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1380,1219)  scale(66)"/>
+        <circle cx="1570" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1570,780)  scale(66)"/>
+        <circle cx="1570" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1570,1219)  scale(66)"/>
+        <circle cx="1760" cy="780" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1760,780)  scale(66)"/>
+        <circle cx="1760" cy="1219" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1760,1219)  scale(66)"/>
+        <circle cx="335" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(335,616)  scale(66)"/>
+        <circle cx="335" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(335,1383)  scale(66)"/>
+        <circle cx="525" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(525,616)  scale(66)"/>
+        <circle cx="525" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(525,1383)  scale(66)"/>
+        <circle cx="715" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(715,616)  scale(66)"/>
+        <circle cx="715" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(715,1383)  scale(66)"/>
+        <circle cx="905" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(905,616)  scale(66)"/>
+        <circle cx="905" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(905,1383)  scale(66)"/>
+        <circle cx="1095" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1095,616)  scale(66)"/>
+        <circle cx="1095" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1095,1383)  scale(66)"/>
+        <circle cx="1285" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1285,616)  scale(66)"/>
+        <circle cx="1285" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1285,1383)  scale(66)"/>
+        <circle cx="1475" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1475,616)  scale(66)"/>
+        <circle cx="1475" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1475,1383)  scale(66)"/>
+        <circle cx="1665" cy="616" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1665,616)  scale(66)"/>
+        <circle cx="1665" cy="1383" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1665,1383)  scale(66)"/>
+        <circle cx="430" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(430,451)  scale(66)"/>
+        <circle cx="430" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(430,1548)  scale(66)"/>
+        <circle cx="620" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(620,451)  scale(66)"/>
+        <circle cx="620" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(620,1548)  scale(66)"/>
+        <circle cx="810" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(810,451)  scale(66)"/>
+        <circle cx="810" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(810,1548)  scale(66)"/>
+        <circle cx="1000" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1000,451)  scale(66)"/>
+        <circle cx="1000" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1000,1548)  scale(66)"/>
+        <circle cx="1190" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1190,451)  scale(66)"/>
+        <circle cx="1190" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1190,1548)  scale(66)"/>
+        <circle cx="1380" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1380,451)  scale(66)"/>
+        <circle cx="1380" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1380,1548)  scale(66)"/>
+        <circle cx="1570" cy="451" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1570,451)  scale(66)"/>
+        <circle cx="1570" cy="1548" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1570,1548)  scale(66)"/>
+        <circle cx="525" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(525,286)  scale(66)"/>
+        <circle cx="525" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(525,1713)  scale(66)"/>
+        <circle cx="715" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(715,286)  scale(66)"/>
+        <circle cx="715" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(715,1713)  scale(66)"/>
+        <circle cx="905" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(905,286)  scale(66)"/>
+        <circle cx="905" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(905,1713)  scale(66)"/>
+        <circle cx="1095" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1095,286)  scale(66)"/>
+        <circle cx="1095" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1095,1713)  scale(66)"/>
+        <circle cx="1285" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1285,286)  scale(66)"/>
+        <circle cx="1285" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1285,1713)  scale(66)"/>
+        <circle cx="1475" cy="286" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,0.28867 0,-0.57735 0.5,0.28867" fill="rgb(90,90,90)" transform="translate(1475,286)  scale(66)"/>
+        <circle cx="1475" cy="1713" r="40" fill="url(#scg)"/>
+        <polygon points="-0.5,-0.28867 0.5,-0.28867 0,0.57735" fill="rgb(90,90,90)" transform="translate(1475,1713)  scale(66)"/>
+        <text class="letters" fill="#fac" x="422.000000" y="1673.179321">A</text>
+        <text class="letters" fill="#fac" x="327.000000" y="1508.634521">B</text>
+        <text class="letters" fill="#fac" x="232.000000" y="1344.089600">C</text>
+        <text class="letters" fill="#fac" x="137.000000" y="1179.544800">D</text>
+        <text class="letters" fill="#fac" x="42.000000" y="1015.000000">E</text>
+        <text class="letters" fill="#fac" x="137.000000" y="850.455139">F</text>
+        <text class="letters" fill="#fac" x="232.000000" y="685.910339">G</text>
+        <text class="letters" fill="#fac" x="327.000000" y="521.365479">H</text>
+        <text class="letters" fill="#fac" x="422.000000" y="356.820679">I</text>
+        <text class="letters" fill="#afc" x="707.000000" y="1837.724121">1</text>
+        <text class="letters" fill="#afc" x="897.000000" y="1837.724121">2</text>
+        <text class="letters" fill="#afc" x="1087.000000" y="1837.724121">3</text>
+        <text class="letters" fill="#afc" x="1277.000000" y="1837.724121">4</text>
+        <text class="letters" fill="#afc" x="1467.000000" y="1837.724121">5</text>
+        <text class="letters" fill="#afc" x="1562.000000" y="1673.179199">6</text>
+        <text class="letters" fill="#afc" x="1657.000000" y="1508.634399">7</text>
+        <text class="letters" fill="#afc" x="1752.000000" y="1344.089600">8</text>
+        <text class="letters" fill="#afc" x="1847.000000" y="1179.544800">9</text>
+        <circle cx="620" cy="341" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="810" cy="341" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1000" cy="341" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1190" cy="341" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1380" cy="341" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="525" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="715" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="905" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1095" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1285" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1475" cy="506" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="810" cy="670" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1000" cy="670" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1190" cy="670" r="76" fill="url(#black_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="810" cy="1329" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1000" cy="1329" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1190" cy="1329" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="525" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="715" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="905" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1095" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1285" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1475" cy="1493" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="620" cy="1658" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="810" cy="1658" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1000" cy="1658" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1190" cy="1658" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="1380" cy="1658" r="76" fill="url(#white_grad)" stroke="black" stroke-width="7"/>
+        <circle cx="80" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="220" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="360" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="500" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="640" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="780" cy="-40" r="20" fill="url(#black_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1120" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1260" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1400" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1540" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1680" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+        <circle cx="1820" cy="-40" r="20" fill="url(#white_grad)" opacity="0.2" stroke="black" stroke-width="6"/>
+    </g>
+</svg>
